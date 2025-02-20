@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectConnection } from 'nest-knexjs';
 import { Knex } from 'knex';
 import { GetProductsDto, UploadLicenseDto } from './dto/license.dto';
@@ -25,13 +29,13 @@ export class LicensesService {
         'installations.version',
         'licenses.license_key',
         'licenses.status as license_status',
-        'licenses.expiry_date as expiration_date'
+        'licenses.expiry_date as expiration_date',
       );
 
     return {
       status: 'success',
       server_id: dto.server_id,
-      products
+      products,
     };
   }
 
@@ -60,10 +64,10 @@ export class LicensesService {
     // For demonstration, we'll just create a new license record
     await this.knex('licenses')
       .where({
-        application_id: application.id
+        application_id: application.id,
       })
       .update({
-        status: 'inactive'
+        status: 'inactive',
       });
 
     await this.knex('licenses').insert({
@@ -72,31 +76,35 @@ export class LicensesService {
       seats: 10, // This would come from the license file
       start_date: new Date(),
       expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
-      status: 'active'
+      status: 'active',
     });
 
     return {
       status: 'success',
-      message: 'License updated successfully'
+      message: 'License updated successfully',
     };
   }
 
   async checkLicenseExceed() {
     const exceedingLicenses = await this.knex('licenses')
       .join('applications', 'licenses.application_id', 'applications.id')
-      .join('installations', 'licenses.application_id', 'installations.application_id')
+      .join(
+        'installations',
+        'licenses.application_id',
+        'installations.application_id',
+      )
       .groupBy('licenses.id', 'applications.name', 'licenses.seats')
       .havingRaw('COUNT(installations.id) > licenses.seats')
       .select(
         'applications.name as product_name',
         'licenses.seats as allowed_instances',
-        this.knex.raw('COUNT(installations.id) as current_instances')
+        this.knex.raw('COUNT(installations.id) as current_instances'),
       );
 
-    return exceedingLicenses.map(license => ({
+    return exceedingLicenses.map((license) => ({
       status: 'alert',
       type: 'license_exceed',
-      message: `License limit exceeded for '${license.product_name}'. Allowed: ${license.allowed_instances}, Used: ${license.current_instances}.`
+      message: `License limit exceeded for '${license.product_name}'. Allowed: ${license.allowed_instances}, Used: ${license.current_instances}.`,
     }));
   }
 
@@ -111,18 +119,19 @@ export class LicensesService {
       .where('licenses.status', 'active')
       .select(
         'applications.name as product_name',
-        'licenses.expiry_date as expiration_date'
+        'licenses.expiry_date as expiration_date',
       );
 
-    return expiringLicenses.map(license => {
+    return expiringLicenses.map((license) => {
       const daysRemaining = Math.ceil(
-        (new Date(license.expiration_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+        (new Date(license.expiration_date).getTime() - Date.now()) /
+          (1000 * 60 * 60 * 24),
       );
 
       return {
         status: 'alert',
         type: 'license_deadline',
-        message: `License for '${license.product_name}' will expire in ${daysRemaining} days. Please renew.`
+        message: `License for '${license.product_name}' will expire in ${daysRemaining} days. Please renew.`,
       };
     });
   }

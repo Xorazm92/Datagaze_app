@@ -21,12 +21,12 @@ export class CreateAdminDto {
   @MinLength(6)
   password: string;
 
-  @ApiProperty({ 
-    example: AdminRole.ADMIN, 
-    description: 'Role of admin', 
-    enum: AdminRole,
-    default: AdminRole.ADMIN 
-  })
-  @IsEnum(AdminRole)
-  role: AdminRole;
+  // @ApiProperty({
+  //   example: AdminRole.ADMIN,
+  //   description: 'Role of admin',
+  //   enum: AdminRole,
+  //   default: AdminRole.ADMIN,
+  // })
+  // @IsEnum(AdminRole)
+  // role: AdminRole;
 }

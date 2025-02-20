@@ -11,7 +11,7 @@ module.exports = {
       password: process.env.DB_PASSWORD || 'postgres'
     },
     migrations: {
-      directory: './migrations'
+      directory: './src/core/database/migrations'
     }
   }
 };

@@ -3,7 +3,7 @@ import { IsString, IsIP, IsOptional, IsEnum } from 'class-validator';
 
 export enum ComputerStatus {
   ACTIVE = 'active',
-  INACTIVE = 'inactive'
+  INACTIVE = 'inactive',
 }
 
 export class ComputerDto {
@@ -25,7 +25,11 @@ export class ComputerDto {
   @IsOptional()
   os_version?: string;
 
-  @ApiProperty({ enum: ComputerStatus, example: 'active', description: 'Computer status' })
+  @ApiProperty({
+    enum: ComputerStatus,
+    example: 'active',
+    description: 'Computer status',
+  })
   @IsEnum(ComputerStatus)
   @IsOptional()
   status?: ComputerStatus;
@@ -40,7 +44,10 @@ export class InstallApplicationDto {
   @IsString()
   version: string;
 
-  @ApiProperty({ example: 'https://example.com/slack_installer.exe', description: 'Installer URL' })
+  @ApiProperty({
+    example: 'https://example.com/slack_installer.exe',
+    description: 'Installer URL',
+  })
   @IsString()
   installer_url: string;
 }
@@ -54,7 +61,10 @@ export class UpdateApplicationDto {
   @IsString()
   new_version: string;
 
-  @ApiProperty({ example: 'https://example.com/chrome_update.exe', description: 'Update URL' })
+  @ApiProperty({
+    example: 'https://example.com/chrome_update.exe',
+    description: 'Update URL',
+  })
   @IsString()
   update_url: string;
 }

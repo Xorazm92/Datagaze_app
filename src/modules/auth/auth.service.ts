@@ -2,7 +2,10 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
-import { UpdatePasswordDto, SuperAdminUpdatePasswordDto } from './dto/update-password.dto';
+import {
+  UpdatePasswordDto,
+  SuperAdminUpdatePasswordDto,
+} from './dto/update-password.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Knex } from 'knex';
 import { InjectConnection } from 'nest-knexjs';
@@ -11,7 +14,7 @@ import { InjectConnection } from 'nest-knexjs';
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    @InjectConnection() private readonly knex: Knex
+    @InjectConnection() private readonly knex: Knex,
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
@@ -19,7 +22,7 @@ export class AuthService {
       .where({ username, status: 'active' })
       .first();
 
-    if (user && await bcrypt.compare(password, user.password)) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user;
       return result;
     }
@@ -28,7 +31,7 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.username, loginDto.password);
-    
+
     if (!user) {
       throw new UnauthorizedException('Invalid username or password');
     }
@@ -38,10 +41,10 @@ export class AuthService {
       .update({ last_login: this.knex.fn.now() });
 
     const payload = { sub: user.id, username: user.username };
-    
+
     return {
       status: 'success',
-      token: this.jwtService.sign(payload)
+      token: this.jwtService.sign(payload),
     };
   }
 
@@ -55,27 +58,28 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(dto.new_password, 10);
-    
+
     await this.knex('admin')
       .where({ id: userId })
       .update({ password: hashedPassword });
 
     return {
       status: 'success',
-      message: 'Password updated successfully'
+      message: 'Password updated successfully',
     };
   }
 
   async superAdminUpdatePassword(dto: SuperAdminUpdatePasswordDto) {
     const hashedPassword = await bcrypt.hash(dto.new_password, 10);
-    
+
     await this.knex('admin')
       .where({ id: dto.user_id })
       .update({ password: hashedPassword });
 
     return {
       status: 'success',
-      message: 'Password updated successfully. Provide it physically to the user.'
+      message:
+        'Password updated successfully. Provide it physically to the user.',
     };
   }
 
@@ -89,17 +93,15 @@ export class AuthService {
       throw new UnauthorizedException('Username has been already taken');
     }
 
-    await this.knex('admin')
-      .where({ id: userId })
-      .update({
-        username: dto.username,
-        name: dto.name,
-        email: dto.email
-      });
+    await this.knex('admin').where({ id: userId }).update({
+      username: dto.username,
+      name: dto.name,
+      email: dto.email,
+    });
 
     return {
       status: 'success',
-      message: 'Profile updated successfully'
+      message: 'Profile updated successfully',
     };
   }
 }

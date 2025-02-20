@@ -12,7 +12,7 @@ export class RoleGuard implements CanActivate {
     if (!user || !user.id) {
       return false;
     }
-
+    console.log(this.adminService.isSuperAdmin(user.id))
     return this.adminService.isSuperAdmin(user.id);
   }
 }

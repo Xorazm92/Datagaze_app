@@ -2,10 +2,11 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Knex } from 'knex';
 import * as bcrypt from 'bcrypt';
 import { CreateAdminDto, AdminRole } from './dto/create-admin.dto';
+import { InjectConnection } from 'nest-knexjs';
 
 @Injectable()
 export class AdminService {
-  constructor(@Inject('KNEX_CONNECTION') private readonly knex: Knex) {}
+  constructor(@InjectConnection() private readonly knex: Knex) {}
 
   async findAll() {
     return this.knex('admin').select('*');
@@ -49,6 +50,6 @@ export class AdminService {
 
   async isSuperAdmin(id: number): Promise<boolean> {
     const admin = await this.findOne(id);
-    return admin?.role === AdminRole.SUPER_ADMIN;
+    return admin? true: false;
   }
 }

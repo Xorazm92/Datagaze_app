@@ -16,7 +16,11 @@ export class UploadLicenseDto {
   @IsString()
   product_name: string;
 
-  @ApiProperty({ type: 'string', format: 'binary', description: 'License file (.lic)' })
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    description: 'License file (.lic)',
+  })
   license_file: any;
 }
 
