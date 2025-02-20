@@ -71,7 +71,7 @@ export class AuthController {
 
   @Post('register')
   @Version('1')
-  @UseGuards(JwtAuthGuard, SuperAdminGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Register new admin (Superadmin only)' })
   @ApiBody({
@@ -106,8 +106,8 @@ export class AuthController {
       },
     },
   })
-  async register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
+  async register(@Body() registerDto: RegisterDto, @Request() req) {
+    return this.authService.createUser(registerDto, req.user.sub);
   }
 
   @Put('update-password')

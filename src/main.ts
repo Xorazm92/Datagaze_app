@@ -2,36 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import knex from 'knex';
-import config from '../knexfile';
-import * as bcrypt from 'bcrypt';
 import helmet from 'helmet';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-
-(async () => {
-  try {
-    const db = knex(config.development);
-
-    const superAdmin = {
-      username: 'Zufar92',
-      email: 'xorazm92@gmail.com',
-      password: await bcrypt.hash('Parol123', 10),
-    };
-
-    const existingAdmin = await db('admin').where({ username: superAdmin.username }).first();
-    if (existingAdmin) {
-      console.log('Super admin already exists!');
-      return;
-    }
-
-    await db('admin').insert(superAdmin);
-    console.log('Super admin added to database:', superAdmin);
-
-    await db.destroy();
-  } catch (error) {
-    console.error('Error occurred:', error);
-  }
-})();
+import { DatabaseService } from './database/database.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -45,17 +18,19 @@ async function bootstrap() {
   });
 
   // Global pipes and filters
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    transform: true,
-    forbidNonWhitelisted: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
   app.useGlobalFilters(new HttpExceptionFilter());
 
   // Swagger configuration
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Base App API')
-    .setDescription('Base App API documentation')
+    .setTitle('Admin API')
+    .setDescription('Admin panel API documentation')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
@@ -63,10 +38,17 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, document);
 
-  const port = process.env.PORT || 3003;
+  // Run seed using DatabaseService
+  const databaseService = app.get(DatabaseService);
+  await databaseService.runSeed();
+
+  const port = process.env.PORT || 8000;
   await app.listen(port);
+  
   console.log(`Application is running on: http://localhost:${port}`);
-  console.log(`Swagger documentation is available at: http://localhost:${port}/api/docs`);
+  console.log(
+    `Swagger documentation is available at: http://localhost:${port}/api/docs`,
+  );
 }
 
 bootstrap().catch((error) => {

@@ -1,12 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import Knex from 'knex';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { KnexModule } from 'nest-knexjs';
 import { AuthModule } from './modules/auth/auth.module';
-import { ComputersModule } from './modules/computers/computers.module';
-import { LicensesModule } from './modules/licenses/licenses.module';
-import databaseConfig from './config/database.config';
-import { AdminModule } from './modules/admin/module';
 
 @Module({
   imports: [
@@ -14,27 +9,18 @@ import { AdminModule } from './modules/admin/module';
       isGlobal: true,
     }),
     KnexModule.forRoot({
-      config: databaseConfig,
-    }),
-    AdminModule,
-    AuthModule,
-    ComputersModule,
-    LicensesModule,
-  ],
-  providers: [
-    {
-      provide: 'KNEX_CONNECTION',
-      useValue: Knex({
-        client: 'pg', // yoki mysql, sqlite3
+      config: {
+        client: 'postgresql',
         connection: {
-          host: process.env.DATABASE_HOST,
-          user: process.env.DATABASE_USER,
-          password: process.env.DATABASE_PASSWORD,
-          database: process.env.DATABASE_NAME,
-        },
-      }),
-    },
+          host: 'localhost',
+          user: 'postgres',
+          password: 'postgres',
+          database: 'base_app',
+          port: 5432
+        }
+      },
+    }),
+    AuthModule,
   ],
-  exports: ['KNEX_CONNECTION'],
 })
 export class AppModule {}
