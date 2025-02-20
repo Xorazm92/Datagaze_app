@@ -14,3 +14,4 @@ mkdir -p src/core/database/migrations
 mkdir -p src/modules/admin
 mkdir -p src/common/guards
 mkdir -p src/common/interfaces
+
