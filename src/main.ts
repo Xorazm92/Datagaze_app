@@ -19,7 +19,9 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
       password: await bcrypt.hash('Admin@123', 10),
     };
 
-    const existingAdmin = await db('admin').where({ username: superAdmin.username }).first();
+    const existingAdmin = await db('admin')
+      .where({ username: superAdmin.username })
+      .first();
     if (existingAdmin) {
       console.log('Super admin already exists!');
       return;
@@ -37,13 +39,8 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Global configurations
-  app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:5173'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    credentials: true,
-  });
-  app.use(helmet());
+  app.enableCors();
+  app.setGlobalPrefix('v1');
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',
@@ -71,7 +68,9 @@ async function bootstrap() {
   const port = process.env.PORT || 8000;
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
-  console.log(`Swagger documentation is available at: http://localhost:${port}/api/docs`);
+  console.log(
+    `Swagger documentation is available at: http://localhost:${port}/api/docs`,
+  );
 }
 
 bootstrap().catch((error) => {

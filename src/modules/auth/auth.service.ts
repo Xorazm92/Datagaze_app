@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
@@ -20,9 +24,17 @@ export class AuthService {
     private readonly adminService: AdminService,
   ) {}
 
-  async validateAdmin(username: string, email: string, password: string): Promise<any> {
-    const admin = await this.adminService.findByUsernameOrEmail(username, email);
-    if (admin && await bcrypt.compare(password, admin.password)) {
+  async validateAdmin(
+    username: string,
+    email: string,
+    password: string,
+  ): Promise<any> {
+    const admin = await this.adminService.findByUsernameOrEmail(
+      username,
+      email,
+    );
+    if (admin && (await bcrypt.compare(password, admin.password))) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = admin;
       return result;
     }
@@ -35,7 +47,7 @@ export class AuthService {
       loginDto.email,
       loginDto.password,
     );
-    
+
     if (!admin) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -107,7 +119,7 @@ export class AuthService {
     try {
       console.log('Register attempt:', {
         username: registerDto.username,
-        email: registerDto.email
+        email: registerDto.email,
       });
 
       // Check if username already exists
@@ -117,7 +129,7 @@ export class AuthService {
 
       if (existingUser) {
         console.log('Registration failed: Username already exists', {
-          username: registerDto.username
+          username: registerDto.username,
         });
         throw new BadRequestException('Username already taken');
       }
@@ -133,18 +145,18 @@ export class AuthService {
         role: 'admin',
         status: 'active',
         created_at: this.knex.fn.now(),
-        updated_at: this.knex.fn.now()
+        updated_at: this.knex.fn.now(),
       };
 
       console.log('Creating new user:', {
         ...newUser,
-        password: '[HIDDEN]'
+        password: '[HIDDEN]',
       });
 
       await this.knex('admin').insert(newUser);
 
       console.log('User registered successfully:', {
-        username: registerDto.username
+        username: registerDto.username,
       });
 
       return {
@@ -154,7 +166,7 @@ export class AuthService {
     } catch (error) {
       console.error('Registration error:', {
         error: error.message,
-        stack: error.stack
+        stack: error.stack,
       });
       throw error;
     }

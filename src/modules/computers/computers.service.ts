@@ -8,7 +8,6 @@ import {
 import { InjectConnection } from 'nest-knexjs';
 import { Knex } from 'knex';
 import {
-  ComputerDto,
   InstallApplicationDto,
   UpdateApplicationDto,
   RemoveApplicationDto,
@@ -32,6 +31,7 @@ export class ComputersService {
         status: 'success',
         data: computers,
       };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new InternalServerErrorException(
         'Internal server error. Please try again later.',
@@ -200,6 +200,7 @@ export class ComputersService {
         message: 'Application removal started successfully.',
         task_id: `task-${Date.now()}`,
       };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new InternalServerErrorException(
         'Failed to remove the application due to a system error.',

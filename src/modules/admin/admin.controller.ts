@@ -9,36 +9,32 @@ import {
   UseGuards,
   BadRequestException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { RoleGuard } from '../../common/guards/role.guard';
 import { isUUID } from 'class-validator';
 
 @ApiTags('Admin')
 @Controller('admin')
-@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Post()
-  // @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Create a new admin' })
   create(@Body() createAdminDto: CreateAdminDto) {
-    console.log('keldiyuuuuu');
     return this.adminService.create(createAdminDto);
   }
 
   @Get()
-  // @UseGuards(RoleGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get all admins' })
   findAll() {
     return this.adminService.findAll();
   }
 
   @Get(':id')
-  // @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Get admin by id' })
   findOne(@Param('id') id: string) {
     if (!isUUID(id)) {
@@ -48,7 +44,6 @@ export class AdminController {
   }
 
   @Patch(':id')
-  // @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Update admin' })
   update(
     @Param('id') id: string,
@@ -61,7 +56,6 @@ export class AdminController {
   }
 
   @Delete(':id')
-  // @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Delete admin' })
   remove(@Param('id') id: string) {
     if (!isUUID(id)) {

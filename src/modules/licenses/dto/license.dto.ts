@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsDateString, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsDateString } from 'class-validator';
 
 export class GetProductsDto {
   @ApiProperty({ example: '12345', description: 'Server ID' })

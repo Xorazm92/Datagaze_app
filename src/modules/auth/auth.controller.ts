@@ -32,40 +32,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  @Version('1')
-  @ApiOperation({ summary: 'User login' })
-  @ApiBody({
-    type: LoginDto,
-    examples: {
-      success: {
-        value: {
-          username: 'Zufar92',
-          email: 'xorazm92@gmail.com',
-          password: 'Admin@123',
-        },
-      },
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Login successful',
-    schema: {
-      example: {
-        status: 'success',
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-      },
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Invalid credentials',
-    schema: {
-      example: {
-        status: 'error',
-        message: 'Invalid username or password',
-      },
-    },
-  })
+  @ApiOperation({ summary: 'Login' })
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }

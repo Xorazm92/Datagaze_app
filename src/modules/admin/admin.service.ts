@@ -1,7 +1,7 @@
-import { Injectable, Inject, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { Knex } from 'knex';
 import * as bcrypt from 'bcrypt';
-import { CreateAdminDto, AdminRole } from './dto/create-admin.dto';
+import { CreateAdminDto } from './dto/create-admin.dto';
 import { InjectConnection } from 'nest-knexjs';
 
 @Injectable()
@@ -9,20 +9,96 @@ export class AdminService {
   constructor(@InjectConnection() private readonly knex: Knex) {}
 
   async findAll() {
-    return this.knex('admin').select('*');
+    try {
+      // Password maydonini olib tashlaymiz
+      const admins = await this.knex('admin')
+        .select([
+          'id',
+          'username',
+          'email',
+          'role',
+          'created_at',
+          'updated_at'
+        ])
+        .orderBy('created_at', 'desc');
+
+      if (!admins || admins.length === 0) {
+        return {
+          status: 200,
+          message: 'No admins found',
+          data: []
+        };
+      }
+
+      return {
+        status: 200,
+        message: 'Admins retrieved successfully',
+        data: admins
+      };
+
+    } catch (error) {
+      throw new BadRequestException({
+        status: 400,
+        message: 'Failed to retrieve admins',
+        error: error.message,
+      });
+    }
   }
 
   async create(createAdminDto: CreateAdminDto) {
-    const hashedPassword = await bcrypt.hash(createAdminDto.password, 10);
-    const [admin] = await this.knex('admin')
-      .insert({
-        ...createAdminDto,
-        password: hashedPassword,
-        created_at: new Date(),
-        updated_at: new Date(),
-      })
-      .returning('*');
-    return admin;
+    try {
+      // Avval username va email mavjudligini tekshirish
+      const existingUsername = await this.knex('admin')
+        .where('username', createAdminDto.username)
+        .first();
+
+      if (existingUsername) {
+        throw new BadRequestException({
+          status: 400,
+          message: 'Username already exists',
+          error: 'Bad Request'
+        });
+      }
+
+      const existingEmail = await this.knex('admin')
+        .where('email', createAdminDto.email)
+        .first();
+
+      if (existingEmail) {
+        throw new BadRequestException({
+          status: 400,
+          message: 'Email already exists',
+          error: 'Bad Request'
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(createAdminDto.password, 10);
+      const [admin] = await this.knex('admin')
+        .insert({
+          ...createAdminDto,
+          role: 'admin',
+          password: hashedPassword,
+          created_at: new Date(),
+          updated_at: new Date(),
+        })
+        .returning('*');
+      
+      return {
+        status: 201,
+        message: 'Admin created successfully',
+        data: admin
+      };
+
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException({
+        status: 400,
+        message: 'Failed to create admin',
+        error: error.message
+      });
+    }
   }
 
   async findOne(id: string) {
