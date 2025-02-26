@@ -10,32 +10,23 @@ export class AdminService {
 
   async findAll() {
     try {
-      // Password maydonini olib tashlaymiz
       const admins = await this.knex('admin')
-        .select([
-          'id',
-          'username',
-          'email',
-          'role',
-          'created_at',
-          'updated_at'
-        ])
+        .select(['id', 'username', 'email', 'role', 'created_at', 'updated_at'])
         .orderBy('created_at', 'desc');
 
       if (!admins || admins.length === 0) {
         return {
           status: 200,
           message: 'No admins found',
-          data: []
+          data: [],
         };
       }
 
       return {
         status: 200,
         message: 'Admins retrieved successfully',
-        data: admins
+        data: admins,
       };
-
     } catch (error) {
       throw new BadRequestException({
         status: 400,
@@ -47,7 +38,6 @@ export class AdminService {
 
   async create(createAdminDto: CreateAdminDto) {
     try {
-      // Avval username va email mavjudligini tekshirish
       const existingUsername = await this.knex('admin')
         .where('username', createAdminDto.username)
         .first();
@@ -56,7 +46,7 @@ export class AdminService {
         throw new BadRequestException({
           status: 400,
           message: 'Username already exists',
-          error: 'Bad Request'
+          error: 'Bad Request',
         });
       }
 
@@ -68,7 +58,7 @@ export class AdminService {
         throw new BadRequestException({
           status: 400,
           message: 'Email already exists',
-          error: 'Bad Request'
+          error: 'Bad Request',
         });
       }
 
@@ -82,13 +72,12 @@ export class AdminService {
           updated_at: new Date(),
         })
         .returning('*');
-      
+
       return {
         status: 201,
         message: 'Admin created successfully',
-        data: admin
+        data: admin,
       };
-
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
@@ -96,7 +85,7 @@ export class AdminService {
       throw new BadRequestException({
         status: 400,
         message: 'Failed to create admin',
-        error: error.message
+        error: error.message,
       });
     }
   }

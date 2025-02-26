@@ -6,7 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { AdminModule } from '../admin/module';
 import { KnexModule } from 'nest-knexjs';
 import { JwtStrategy } from '../../common/strategies/jwt.strategy';
-import databaseConfig from '../../config/database.config';
+import { databaseConfig } from '../../config/database.config';
 
 @Module({
   imports: [

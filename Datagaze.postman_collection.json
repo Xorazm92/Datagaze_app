@@ -1,0 +1,318 @@
+{
+  "info": {
+    "name": "Datagaze API Collection",
+    "description": "API collection for Datagaze Application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"Zufar92\",\n  \"password\": \"Admin@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Register Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"new_admin\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"StrongPass123!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/update-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "update-password"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Admin@123\",\n  \"newPassword\": \"NewPass@123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get All Admins",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin"]
+            }
+          }
+        },
+        {
+          "name": "Get Admin by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "admin-uuid"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Computers",
+      "item": [
+        {
+          "name": "Get All Computers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/computers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "computers"]
+            }
+          }
+        },
+        {
+          "name": "Install Application",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/computers/install",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "computers", "install"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"computer_id\": \"comp-001\",\n  \"application_name\": \"App Name\",\n  \"version\": \"1.0.0\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Application",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/computers/update",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "computers", "update"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"computer_id\": \"comp-001\",\n  \"application_name\": \"App Name\",\n  \"new_version\": \"1.1.0\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove Application",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/computers/remove",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "computers", "remove"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"computer_id\": \"comp-001\",\n  \"application_name\": \"App Name\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Licenses",
+      "item": [
+        {
+          "name": "Get Installed Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/licenses/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "licenses", "products"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"computer_id\": \"comp-001\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Upload License",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/licenses/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "licenses", "upload"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "computer_id",
+                  "value": "comp-001",
+                  "type": "text"
+                },
+                {
+                  "key": "application_name",
+                  "value": "App Name",
+                  "type": "text"
+                },
+                {
+                  "key": "license_file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Check License Exceed Alerts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/licenses/alerts/exceed",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "licenses", "alerts", "exceed"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

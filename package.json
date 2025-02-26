@@ -16,7 +16,8 @@
     "migration:create": "knex migrate:make",
     "migration:run": "knex migrate:latest",
     "migration:rollback": "knex migrate:rollback",
-    "seed:run": "knex seed:run"
+    "seed:run": "knex seed:run",
+    "knex": "knex --knexfile knexfile.ts -x ts"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.0",
@@ -45,7 +46,6 @@
     "fp-ts": "^2.16.9",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
-    "knex": "^3.1.0",
     "morgan": "^1.10.0",
     "nest-knexjs": "^0.0.26",
     "nest-winston": "^1.10.2",
@@ -57,8 +57,10 @@
     "pg-hstore": "^2.3.4",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
+    "ssh2": "^1.16.0",
     "typeorm": "^0.3.20",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -82,6 +84,7 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "jest": "^29.5.0",
+    "knex": "^3.1.0",
     "prettier": "^3.0.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",

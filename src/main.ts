@@ -5,8 +5,17 @@ import { AppModule } from './app.module';
 import knex from 'knex';
 import config from '../knexfile';
 import * as bcrypt from 'bcrypt';
-import helmet from 'helmet';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { logger } from './common/logger/logger.config';
+import * as fs from 'fs';
+import * as path from 'path';
+
+// Create logs directory if it doesn't exist
+const logDir = path.join(process.cwd(), 'logs');
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir);
+}
 
 (async () => {
   try {
@@ -23,57 +32,70 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
       .where({ username: superAdmin.username })
       .first();
     if (existingAdmin) {
-      console.log('Super admin already exists!');
+      logger.info('Super admin already exists!');
       return;
     }
 
     await db('admin').insert(superAdmin);
-    console.log('Super admin added to database:', superAdmin);
+    logger.info('Super admin added to database');
 
     await db.destroy();
   } catch (error) {
-    console.error('Error occurred:', error);
+    logger.error('Error occurred while setting up super admin:', error);
   }
 })();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  try {
+    const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
-  app.setGlobalPrefix('v1');
-  app.enableVersioning({
-    type: VersioningType.URI,
-    defaultVersion: '1',
-  });
+    // Enable CORS
+    app.enableCors({
+      origin: process.env.FRONTEND_URL || '*',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      credentials: true,
+    });
 
-  // Global pipes and filters
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    transform: true,
-    forbidNonWhitelisted: true,
-  }));
-  app.useGlobalFilters(new HttpExceptionFilter());
+    // API versioning
+    app.setGlobalPrefix('v1');
+    app.enableVersioning({
+      type: VersioningType.URI,
+      defaultVersion: '1',
+    });
 
-  // Swagger configuration
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Base App API')
-    .setDescription('Base App API documentation')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
+    // Global pipes and filters
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        forbidNonWhitelisted: true,
+      }),
+    );
+    app.useGlobalFilters(new HttpExceptionFilter());
+    app.useGlobalInterceptors(new LoggingInterceptor());
 
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api/docs', app, document);
+    // Swagger setup
+    const config = new DocumentBuilder()
+      .setTitle('Datagaze All-in-One API')
+      .setDescription('API documentation for Datagaze management system')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
 
-  const port = process.env.PORT || 8000;
-  await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
-  console.log(
-    `Swagger documentation is available at: http://localhost:${port}/api/docs`,
-  );
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+
+    // Start server
+    const port = process.env.PORT || 8000;
+    await app.listen(port);
+    logger.info(`Application is running on: http://localhost:${port}`);
+    logger.info(
+      `Swagger documentation is available at: http://localhost:${port}/api/docs`,
+    );
+  } catch (error) {
+    logger.error('Failed to start application:', error);
+    process.exit(1);
+  }
 }
 
-bootstrap().catch((error) => {
-  console.error('Application failed to start:', error);
-  process.exit(1);
-});
+bootstrap();

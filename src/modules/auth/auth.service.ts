@@ -24,38 +24,47 @@ export class AuthService {
     private readonly adminService: AdminService,
   ) {}
 
-  async validateAdmin(
-    username: string,
-    email: string,
-    password: string,
-  ): Promise<any> {
-    const admin = await this.adminService.findByUsernameOrEmail(
-      username,
-      email,
-    );
-    if (admin && (await bcrypt.compare(password, admin.password))) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = admin;
-      return result;
+  async validateAdmin(username: string, password: string) {
+    try {
+      const admin = await this.knex('admin')
+        .where({ username })
+        .first();
+
+      if (admin && await bcrypt.compare(password, admin.password)) {
+        const { password, ...result } = admin;
+        return result;
+      }
+      return null;
+    } catch (error) {
+      throw new UnauthorizedException('Invalid credentials');
     }
-    return null;
   }
 
   async login(loginDto: LoginDto) {
-    const admin = await this.validateAdmin(
-      loginDto.username,
-      loginDto.email,
-      loginDto.password,
-    );
+    try {
+      const admin = await this.validateAdmin(
+        loginDto.username,
+        loginDto.password,
+      );
 
-    if (!admin) {
+      if (!admin) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      const payload = { username: admin.username, sub: admin.id, role: admin.role };
+      return {
+        status: 'success',
+        access_token: this.jwtService.sign(payload),
+        user: {
+          id: admin.id,
+          username: admin.username,
+          email: admin.email,
+          role: admin.role
+        }
+      };
+    } catch (error) {
       throw new UnauthorizedException('Invalid credentials');
     }
-
-    const payload = { username: admin.username, sub: admin.id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
   }
 
   async updatePassword(userId: string, dto: UpdatePasswordDto) {
