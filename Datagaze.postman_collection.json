@@ -13,6 +13,110 @@
   ],
   "item": [
     {
+      "name": "SSH",
+      "item": [
+        {
+          "name": "Connect to SSH Server",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/api/ssh/connect",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "api", "ssh", "connect"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{
+  \"server_id\": \"srv-1001\",
+  \"ip\": \"192.168.1.100\",
+  \"port\": 22,
+  \"username\": \"admin\",
+  \"auth_type\": \"password\",
+  \"password\": \"securepass123\"
+}"
+            }
+          }
+        },
+        {
+          "name": "Check Server Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/api/ssh/{{server_id}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "api", "ssh", "{{server_id}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Get Connection Errors",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/api/ssh/{{server_id}}/errors",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "api", "ssh", "{{server_id}}", "errors"]
+            }
+          }
+        },
+        {
+          "name": "Store SSH Credentials",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/api/ssh/store-credentials",
+              "host": ["{{baseUrl}}"],
+              "path": ["v1", "api", "ssh", "store-credentials"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{
+  \"name\": \"Production Server\",
+  \"server_id\": \"srv-1001\",
+  \"ip\": \"192.168.1.100\",
+  \"port\": 22,
+  \"username\": \"admin\",
+  \"auth_type\": \"password\",
+  \"password\": \"securepass123\"
+}"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Authentication",
       "item": [
         {

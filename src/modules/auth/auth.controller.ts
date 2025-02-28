@@ -38,7 +38,6 @@ export class AuthController {
   }
 
   @Post('register')
-  @Version('1')
   @UseGuards(JwtAuthGuard, SuperAdminGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Register new admin (Superadmin only)' })
@@ -79,7 +78,6 @@ export class AuthController {
   }
 
   @Put('update-password')
-  @Version('1')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user password' })
@@ -122,7 +120,6 @@ export class AuthController {
   }
 
   @Put('super-admin/update-password')
-  @Version('1')
   @UseGuards(JwtAuthGuard, SuperAdminGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Superadmin updates user password' })
@@ -154,7 +151,6 @@ export class AuthController {
   }
 
   @Put('update-profile')
-  @Version('1')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user profile' })

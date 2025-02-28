@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { isUUID } from 'class-validator';
 
 @ApiTags('Admin')
-@Controller('admin')
+@Controller('api/admin')
 @ApiBearerAuth()
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}

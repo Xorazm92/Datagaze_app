@@ -13,7 +13,7 @@ import { SSHService } from './ssh.service';
 import { ConnectDto, StoreCredentialsDto } from './dto/ssh.dto';
 
 @ApiTags('SSH')
-@Controller('v1/api/ssh')
+@Controller('api/ssh')
 @UseGuards(JwtAuthGuard)
 export class SSHController {
   constructor(private readonly sshService: SSHService) {}
