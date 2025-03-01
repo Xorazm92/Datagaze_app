@@ -8,11 +8,18 @@ import { LicensesModule } from './modules/licenses/licenses.module';
 import { databaseConfig } from './config/database.config';
 import { AdminModule } from './modules/admin/module';
 import { HttpModule } from '@nestjs/axios';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { SoftwareModule } from './modules/software/software.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/public',
     }),
     KnexModule.forRoot({
       config: databaseConfig,
@@ -22,6 +29,7 @@ import { HttpModule } from '@nestjs/axios';
     ComputersModule,
     LicensesModule,
     HttpModule,
+    SoftwareModule,
   ],
   providers: [
     {

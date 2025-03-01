@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import knex from 'knex';
 import config from '../knexfile';
 import * as bcrypt from 'bcrypt';
