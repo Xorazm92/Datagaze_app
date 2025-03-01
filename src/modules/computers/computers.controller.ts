@@ -28,6 +28,28 @@ import {
 @Controller('api/computers')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
+@ApiResponse({
+  status: 401,
+  description: 'Unauthorized',
+  schema: {
+    type: 'object',
+    properties: {
+      status: { type: 'string', example: 'error' },
+      message: { type: 'string', example: 'Unauthorized access' }
+    }
+  }
+})
+@ApiResponse({
+  status: 500,
+  description: 'Internal server error',
+  schema: {
+    type: 'object',
+    properties: {
+      status: { type: 'string', example: 'error' },
+      message: { type: 'string', example: 'An unexpected error occurred' }
+    }
+  }
+})
 export class ComputersController {
   constructor(private readonly computersService: ComputersService) {}
 
@@ -89,7 +111,45 @@ export class ComputersController {
   }
 
   @Get(':computerId/applications')
-  @ApiOperation({ summary: 'Get list of installed applications on a computer' })
+  @ApiOperation({
+    summary: 'Get list of installed applications on a computer',
+    description: 'Retrieve all applications installed on a specific computer'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Applications retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'success' },
+        data: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', example: 'app-001' },
+              name: { type: 'string', example: 'Adobe Photoshop' },
+              version: { type: 'string', example: '2024.1.0' },
+              install_date: { type: 'string', example: '2025-02-28T10:30:00Z' },
+              license_key: { type: 'string', example: 'XXXX-YYYY-ZZZZ-WWWW' },
+              status: { type: 'string', example: 'active' }
+            }
+          }
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Computer not found',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'error' },
+        message: { type: 'string', example: 'Computer with ID comp-001 not found' }
+      }
+    }
+  })
   @ApiResponse({
     status: 200,
     description: 'List of applications retrieved successfully',

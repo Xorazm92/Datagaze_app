@@ -28,11 +28,83 @@ import { SuperAdminGuard } from '../../common/guards/super-admin.guard';
 
 @ApiTags('Authentication')
 @Controller('api/auth')
+@ApiResponse({
+  status: 401,
+  description: 'Unauthorized',
+  schema: {
+    type: 'object',
+    properties: {
+      status: { type: 'string', example: 'error' },
+      message: { type: 'string', example: 'Unauthorized access' }
+    }
+  }
+})
+@ApiResponse({
+  status: 500,
+  description: 'Internal server error',
+  schema: {
+    type: 'object',
+    properties: {
+      status: { type: 'string', example: 'error' },
+      message: { type: 'string', example: 'An unexpected error occurred' }
+    }
+  }
+})
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  @ApiOperation({ summary: 'Login' })
+  @ApiOperation({
+    summary: 'Login to get access token',
+    description: 'Authenticate user and get JWT token for accessing protected endpoints'
+  })
+  @ApiBody({
+    type: LoginDto,
+    examples: {
+      success: {
+        value: {
+          username: 'Zufar92',
+          password: 'Admin@123'
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Login successful',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'success' },
+        data: {
+          type: 'object',
+          properties: {
+            token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
+            user: {
+              type: 'object',
+              properties: {
+                id: { type: 'string', example: '1' },
+                username: { type: 'string', example: 'Zufar92' },
+                email: { type: 'string', example: 'xorazm92@gmail.com' },
+                role: { type: 'string', example: 'super_admin' }
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid credentials',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'error' },
+        message: { type: 'string', example: 'Invalid username or password' }
+      }
+    }
+  })
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
@@ -40,7 +112,63 @@ export class AuthController {
   @Post('register')
   @UseGuards(JwtAuthGuard, SuperAdminGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Register new admin (Superadmin only)' })
+  @ApiOperation({
+    summary: 'Register new admin (Superadmin only)',
+    description: 'Create a new admin user. Only accessible by super admin.'
+  })
+  @ApiBody({
+    type: RegisterDto,
+    examples: {
+      success: {
+        value: {
+          username: 'new_admin',
+          email: 'newadmin@example.com',
+          password: 'StrongPassword@456'
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Admin registered successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'success' },
+        data: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '2' },
+            username: { type: 'string', example: 'new_admin' },
+            email: { type: 'string', example: 'newadmin@example.com' },
+            role: { type: 'string', example: 'admin' },
+            created_at: { type: 'string', example: '2025-02-28T10:30:00Z' }
+          }
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input or username taken',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'error' },
+        message: { type: 'string', example: 'Username already taken' },
+        errors: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              field: { type: 'string', example: 'username' },
+              message: { type: 'string', example: 'Username already exists' }
+            }
+          }
+        }
+      }
+    }
+  })
   @ApiBody({
     type: RegisterDto,
     examples: {
@@ -80,7 +208,43 @@ export class AuthController {
   @Put('update-password')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update user password' })
+  @ApiOperation({
+    summary: 'Update user password',
+    description: 'Allow user to update their own password'
+  })
+  @ApiBody({
+    type: UpdatePasswordDto,
+    examples: {
+      success: {
+        value: {
+          old_password: 'OldPass@123',
+          new_password: 'NewPass@456'
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Password updated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'success' },
+        message: { type: 'string', example: 'Password updated successfully' }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid password',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', example: 'error' },
+        message: { type: 'string', example: 'Current password is incorrect' }
+      }
+    }
+  })
   @ApiBody({
     type: UpdatePasswordDto,
     examples: {
