@@ -24,10 +24,10 @@ if (!fs.existsSync(logDir)) {
     const db = knex(config.development);
 
     const superAdmin = {
-      username: 'Zufar92',
-      email: 'xorazm92@gmail.com',
+      username: 'superadmin',
+      email: 'superadmin@gmail.com',
       role: 'super_admin',
-      password: await bcrypt.hash('Admin@123', 10),
+      password: await bcrypt.hash('superadmin', 10),
     };
 
     const existingAdmin = await db('admin')
@@ -79,9 +79,24 @@ async function bootstrap() {
     // Swagger setup
     const config = new DocumentBuilder()
       .setTitle('Datagaze All-in-One API')
-      .setDescription('API documentation for Datagaze management system')
+      .setDescription(
+        'Complete API documentation for Datagaze management system including Software, Auth, Computers, Licenses, and SSH modules'
+      )
       .setVersion('1.0')
-      .addBearerAuth()
+      .addTag('Software', 'Software management endpoints')
+      .addTag('Auth', 'Authentication and user management')
+      .addTag('Computers', 'Computer management and monitoring')
+      .addTag('Licenses', 'License management and tracking')
+      .addTag('SSH', 'SSH connection and credential management')
+      .addBearerAuth(
+        { 
+          type: 'http', 
+          scheme: 'bearer', 
+          bearerFormat: 'JWT',
+          description: 'Enter your JWT token'
+        },
+        'JWT-auth'
+      )
       .build();
 
     const document = SwaggerModule.createDocument(app, config);

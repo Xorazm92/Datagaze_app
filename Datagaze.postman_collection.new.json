@@ -1,20 +1,345 @@
 {
   "info": {
-    "name": "Datagaze API Collection",
-    "description": "Complete API collection for Datagaze Application",
+    "_postman_id": "combined-datagaze-collection",
+    "name": "Combined Datagaze API Collection",
+    "description": "Combined API collection for Datagaze Application, including Software Module, Auth, Computers, Licenses, and SSH modules, with test scripts",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:8000",
-      "type": "string"
-    }
-  ],
   "item": [
+    {
+      "name": "Software Module",
+      "item": [
+        {
+          "name": "Upload Software Icon",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Software icon file (jpg, jpeg, png, gif)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/software/upload/icon",
+              "host": ["{{base_url}}"],
+              "path": ["api", "software", "upload", "icon"]
+            },
+            "description": "Upload a software icon image file"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response contains data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Upload Software Executable",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Software executable file (exe, msi, dmg, deb, rpm)"
+                },
+                {
+                  "key": "appName",
+                  "value": "dlp",
+                  "type": "text",
+                  "description": "Name of the application"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/software/upload/executable",
+              "host": ["{{base_url}}"],
+              "path": ["api", "software", "upload", "executable"]
+            },
+            "description": "Upload a software executable file"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response contains data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Software",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/software",
+              "host": ["{{base_url}}"],
+              "path": ["api", "software"]
+            },
+            "description": "Get a list of all software in the inventory"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains software list\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.is.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Software by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/software/{{software_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "software", "{{software_id}}"]
+            },
+            "description": "Get details of a specific software by ID"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains software data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.is.an('object');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Software",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"application_name\": \"DLP\",\n  \"version\": \"4.7.2\",\n  \"is_installed\": false,\n  \"path_to_file\": \"/files/web_applications/dlp/dlp-4.7.2.exe\",\n  \"path_to_icon\": \"/assets/logo/dlp.png\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/software",
+              "host": ["{{base_url}}"],
+              "path": ["api", "software"]
+            },
+            "description": "Create a new software entry"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response contains created software\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.has.property('application_name', 'DLP');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Software",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"application_name\": \"DLP\",\n  \"version\": \"4.7.3\",\n  \"is_installed\": true,\n  \"path_to_file\": \"/files/web_applications/dlp/dlp-4.7.3.exe\",\n  \"path_to_icon\": \"/assets/logo/dlp.png\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/software/{{software_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "software", "{{software_id}}"]
+            },
+            "description": "Update an existing software entry"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains updated software\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.has.property('version', '4.7.3');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Software",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/software/{{software_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "software", "{{software_id}}"]
+            },
+            "description": "Delete a software entry"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "pm.test(\"Response is empty\", function () {",
+                  "    pm.response.to.be.empty;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
     {
       "name": "Auth",
       "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"xorazm\",\n    \"email\": \"newadmin@example.com\",\n    \"password\": \"StrongPassword123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Register a new admin user"
+          },
+          "response": []
+        },
         {
           "name": "Login",
           "request": {
@@ -26,16 +351,34 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "login"]
+              "raw": "{{base_url}}/v1/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["v1", "api", "auth", "login"]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"Zufar92\",\n  \"password\": \"Admin@123\"\n}"
+              "raw": "{\n  \"username\": \"superadmin\",\n  \"password\": \"superadmin\"\n}"
             },
             "description": "Login to get authentication token"
           },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains token\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.has.property('token');",
+                  "    pm.environment.set('jwt_token', jsonData.data.token);", 
+                  "});"
+                ]
+              }
+            }
+          ],
           "response": [
             {
               "name": "Success Response",
@@ -43,7 +386,7 @@
                 "method": "POST",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/v1/api/auth/login"
+                  "raw": "{{base_url}}/v1/api/auth/login"
                 }
               },
               "status": "OK",
@@ -51,7 +394,7 @@
               "_postman_previewlanguage": "json",
               "header": [],
               "cookie": [],
-              "body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n      \"id\": \"1\",\n      \"username\": \"Zufar92\",\n      \"email\": \"xorazm92@gmail.com\",\n      \"role\": \"super_admin\"\n    }\n  }\n}"
+              "body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n      \"id\": \"1\",\n      \"username\": \"superadmin\",\n      \"email\": \"superadmin@gmail.com\",\n      \"role\": \"super_admin\"\n    }\n  }\n}"
             }
           ]
         },
@@ -66,12 +409,12 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/auth/register",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/auth/register",
+              "host": ["{{base_url}}"],
               "path": ["v1", "api", "auth", "register"]
             },
             "body": {
@@ -79,7 +422,24 @@
               "raw": "{\n  \"username\": \"new_admin\",\n  \"email\": \"newadmin@example.com\",\n  \"password\": \"StrongPassword@456\"\n}"
             },
             "description": "Register new admin (Superadmin only)"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response contains user data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.has.property('username', 'new_admin');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Update Password",
@@ -92,12 +452,12 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/auth/update-password",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/auth/update-password",
+              "host": ["{{base_url}}"],
               "path": ["v1", "api", "auth", "update-password"]
             },
             "body": {
@@ -105,7 +465,24 @@
               "raw": "{\n  \"old_password\": \"TemporaryPass$987\",\n  \"new_password\": \"NewTemporaryPass987!\"\n}"
             },
             "description": "Update user password"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response confirms password update\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message', 'Password updated successfully');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Update Profile",
@@ -118,12 +495,12 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/auth/update-profile",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/auth/update-profile",
+              "host": ["{{base_url}}"],
               "path": ["v1", "api", "auth", "update-profile"]
             },
             "body": {
@@ -131,7 +508,24 @@
               "raw": "{\n  \"email\": \"updated@example.com\",\n  \"full_name\": \"John Doe\"\n}"
             },
             "description": "Update user profile information"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains updated profile\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.has.property('email', 'updated@example.com');",
+                  "});"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -145,16 +539,33 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/computers",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/computers",
+              "host": ["{{base_url}}"],
               "path": ["api", "computers"]
             },
             "description": "Get list of all computers"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains computers list\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.is.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get Computer Applications",
@@ -163,16 +574,33 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/computers/{{computerId}}/applications",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/computers/{{computerId}}/applications",
+              "host": ["{{base_url}}"],
               "path": ["api", "computers", "{{computerId}}", "applications"]
             },
             "description": "Get list of installed applications on a computer"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains applications list\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.is.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Install Application",
@@ -185,12 +613,12 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/computers/{{computerId}}/applications",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/computers/{{computerId}}/applications",
+              "host": ["{{base_url}}"],
               "path": ["api", "computers", "{{computerId}}", "applications"]
             },
             "body": {
@@ -198,7 +626,24 @@
               "raw": "{\n  \"app_name\": \"Adobe Photoshop\",\n  \"version\": \"2024.1.0\",\n  \"license_key\": \"XXXX-YYYY-ZZZZ-WWWW\"\n}"
             },
             "description": "Install application on a computer"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response contains installed app\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.has.property('app_name', 'Adobe Photoshop');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Update Application",
@@ -211,12 +656,12 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/computers/{{computerId}}/applications/{{appId}}",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/computers/{{computerId}}/applications/{{appId}}",
+              "host": ["{{base_url}}"],
               "path": ["api", "computers", "{{computerId}}", "applications", "{{appId}}"]
             },
             "body": {
@@ -224,7 +669,24 @@
               "raw": "{\n  \"version\": \"2024.2.0\",\n  \"license_key\": \"AAAA-BBBB-CCCC-DDDD\"\n}"
             },
             "description": "Update installed application"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains updated app\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.has.property('version', '2024.2.0');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Remove Application",
@@ -233,16 +695,32 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/computers/{{computerId}}/applications/{{appId}}",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/computers/{{computerId}}/applications/{{appId}}",
+              "host": ["{{base_url}}"],
               "path": ["api", "computers", "{{computerId}}", "applications", "{{appId}}"]
             },
             "description": "Remove installed application"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "pm.test(\"Response is empty\", function () {",
+                  "    pm.response.to.be.empty;",
+                  "});"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -256,12 +734,12 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/licenses/products",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/licenses/products",
+              "host": ["{{base_url}}"],
               "path": ["api", "licenses", "products"]
             },
             "body": {
@@ -269,7 +747,24 @@
               "raw": "{\n  \"computer_id\": \"comp-001\"\n}"
             },
             "description": "Get list of installed products with licenses"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains products list\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.is.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Upload License",
@@ -278,12 +773,12 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/licenses/upload",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/licenses/upload",
+              "host": ["{{base_url}}"],
               "path": ["api", "licenses", "upload"]
             },
             "body": {
@@ -302,7 +797,24 @@
               ]
             },
             "description": "Upload license file"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response contains license data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.has.property('product_id', 'prod-001');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Check License Exceed Alerts",
@@ -311,16 +823,33 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/licenses/alerts/exceed",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/licenses/alerts/exceed",
+              "host": ["{{base_url}}"],
               "path": ["api", "licenses", "alerts", "exceed"]
             },
             "description": "Check for license exceed alerts"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains alerts\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.is.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Check License Deadline Alerts",
@@ -329,16 +858,33 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/licenses/alerts/deadline",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/licenses/alerts/deadline",
+              "host": ["{{base_url}}"],
               "path": ["api", "licenses", "alerts", "deadline"]
             },
             "description": "Check for license deadline alerts"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains alerts\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.is.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -356,12 +902,12 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/ssh/connect",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/ssh/connect",
+              "host": ["{{base_url}}"],
               "path": ["v1", "api", "ssh", "connect"]
             },
             "body": {
@@ -369,7 +915,24 @@
               "raw": "{\n  \"server_id\": \"srv-1001\",\n  \"ip\": \"192.168.1.100\",\n  \"port\": 22,\n  \"username\": \"admin\",\n  \"auth_type\": \"password\",\n  \"password\": \"securepass123\"\n}"
             },
             "description": "Connect to SSH server"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains connection status\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.has.property('status', 'connected');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Check Server Status",
@@ -378,16 +941,33 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/ssh/{{server_id}}/status",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/ssh/{{server_id}}/status",
+              "host": ["{{base_url}}"],
               "path": ["v1", "api", "ssh", "{{server_id}}", "status"]
             },
             "description": "Check SSH server status"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains server status\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.has.property('status');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get Connection Errors",
@@ -396,16 +976,33 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/ssh/{{server_id}}/errors",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/ssh/{{server_id}}/errors",
+              "host": ["{{base_url}}"],
               "path": ["v1", "api", "ssh", "{{server_id}}", "errors"]
             },
             "description": "Get SSH connection errors"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response contains errors\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.is.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Store SSH Credentials",
@@ -418,12 +1015,12 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{jwt_token}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/v1/api/ssh/store-credentials",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{base_url}}/v1/api/ssh/store-credentials",
+              "host": ["{{base_url}}"],
               "path": ["v1", "api", "ssh", "store-credentials"]
             },
             "body": {
@@ -431,9 +1028,78 @@
               "raw": "{\n  \"name\": \"Production Server\",\n  \"server_id\": \"srv-1001\",\n  \"ip\": \"192.168.1.100\",\n  \"port\": 22,\n  \"username\": \"admin\",\n  \"auth_type\": \"password\",\n  \"password\": \"securepass123\"\n}"
             },
             "description": "Store SSH credentials"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response contains stored credentials\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data').that.has.property('server_id', 'srv-1001');",
+                  "});"
+                ]
+              }
+            }
+          ]
         }
       ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "software_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "computerId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "appId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "server_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
     }
   ]
 }

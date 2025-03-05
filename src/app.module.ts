@@ -11,6 +11,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { SoftwareModule } from './modules/software/software.module';
+import { NotificationsModule } from './gateways/notifications.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { SoftwareModule } from './modules/software/software.module';
     LicensesModule,
     HttpModule,
     SoftwareModule,
+    NotificationsModule,
   ],
   providers: [
     {

@@ -15,7 +15,18 @@ import { ConnectDto, StoreCredentialsDto } from './dto/ssh.dto';
 @ApiTags('SSH')
 @Controller('api/ssh')
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+@ApiBearerAuth('JWT-auth')
+@ApiResponse({
+  status: 401,
+  description: 'Unauthorized - Invalid or missing JWT token',
+  schema: {
+    type: 'object',
+    properties: {
+      status: { type: 'string', example: 'error' },
+      message: { type: 'string', example: 'Unauthorized access' }
+    }
+  }
+})
 export class SSHController {
   constructor(private readonly sshService: SSHService) {}
 
