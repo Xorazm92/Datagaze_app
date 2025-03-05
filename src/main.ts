@@ -59,10 +59,11 @@ async function bootstrap() {
     });
 
     // API versioning
-    app.setGlobalPrefix('v1');
+    app.setGlobalPrefix('api');
     app.enableVersioning({
       type: VersioningType.URI,
       defaultVersion: '1',
+      prefix: 'v'
     });
 
     // Global pipes and filters

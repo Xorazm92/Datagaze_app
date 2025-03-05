@@ -27,7 +27,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { SuperAdminGuard } from '../../common/guards/super-admin.guard';
 
 @ApiTags('Authentication')
-@Controller('api/auth')
+@Controller('auth')
 @ApiResponse({
   status: 401,
   description: 'Unauthorized',

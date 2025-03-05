@@ -12,6 +12,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { SoftwareModule } from './modules/software/software.module';
 import { NotificationsModule } from './gateways/notifications.module';
+import { DeploymentModule } from './modules/deployment/deployment.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { NotificationsModule } from './gateways/notifications.module';
     HttpModule,
     SoftwareModule,
     NotificationsModule,
+    DeploymentModule,
   ],
   providers: [
     {
