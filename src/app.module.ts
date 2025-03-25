@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+
 import { KnexModule } from 'nest-knexjs';
 import { AuthModule } from './modules/auth/auth.module';
 import { DesktopModule } from './modules/desktop/desktop.module';
@@ -10,6 +14,10 @@ import { databaseConfig } from './config/database.config';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      exclude: ['/api*'],
+    }),
     KnexModule.forRoot({
       config: {
         client: 'postgresql',
