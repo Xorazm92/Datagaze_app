@@ -1,11 +1,9 @@
-
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { Knex } from 'knex';
-import { InjectKnex } from 'nest-knexjs';
 
 @Injectable()
 export class DlpService {
-  constructor(@InjectKnex() private readonly knex: Knex) {}
+  constructor(@Inject('KnexConnection') private readonly knex: Knex) {}
 
   async getPolicies() {
     return this.knex('dlp_policies').select('*');
@@ -27,7 +25,7 @@ export class DlpService {
     return {
       totalPolicies: parseInt(totalPolicies.count as string),
       activePolicies: parseInt(activePolicies.count as string),
-      totalIncidents: parseInt(totalIncidents.count as string)
+      totalIncidents: parseInt(totalIncidents.count as string),
     };
   }
 
@@ -55,3 +53,4 @@ export class DlpService {
       .returning('*');
   }
 }
+
