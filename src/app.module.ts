@@ -16,6 +16,8 @@ import { databaseConfig } from './config/database.config';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/',
+      renderPath: null,
       exclude: ['/api*'],
     }),
     KnexModule.forRoot({
