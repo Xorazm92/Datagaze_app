@@ -1,25 +1,21 @@
-import { Knex } from 'knex';
+import { ENV } from './env';
 
-const databaseConfig: Knex.Config = {
-  client: 'postgresql',
-  connection: {
-    host: process.env.DATABASE_HOST || 'localhost',
-    port: Number(process.env.DATABASE_PORT) || 5432,
-    user: process.env.DATABASE_USER || 'postgres',
-    password: process.env.DATABASE_PASSWORD || 'postgres',
-    database: process.env.DATABASE_NAME || 'datagaze',
-  },
-  pool: {
-    min: 2,
-    max: 10,
-  },
-  migrations: {
-    directory: './src/database/migrations',
-    tableName: 'knex_migrations',
-  },
-  seeds: {
-    directory: './src/database/seeds',
-  },
+export const databaseConfig = {
+    client: 'pg',
+    connection: {
+        host: ENV.DB_HOST,
+        port: ENV.DB_PORT,
+        user: ENV.DB_USER,
+        password: ENV.DB_PASSWORD,
+        database: ENV.DB_NAME,
+    },
+    pool: {
+        min: 2,
+        max: 10,
+    },
 };
 
-export { databaseConfig };
+// For direct database access in services
+import knex from 'knex';
+const db = knex(databaseConfig);
+export default db;
