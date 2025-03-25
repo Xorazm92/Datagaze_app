@@ -33,34 +33,4 @@ export class DlpController {
   async getReports() {
     return this.dlpService.getReports();
   }
-
-  @Get('statistics')
-  @ApiOperation({ summary: 'Get DLP statistics' })
-  async getStatistics() {
-    return this.dlpService.getStatistics();
-  }
-
-  @Get('policies/:id')
-  @ApiOperation({ summary: 'Get single DLP policy' })
-  async getPolicy(@Param('id') id: string) {
-    return this.dlpService.getPolicy(id);
-  }
-
-  @Put('policies/:id')
-  @ApiOperation({ summary: 'Update DLP policy' })
-  async updatePolicy(@Param('id') id: string, @Body() policyData: any) {
-    return this.dlpService.updatePolicy(id, policyData);
-  }
-
-  @Delete('policies/:id')
-  @ApiOperation({ summary: 'Delete DLP policy' })
-  async deletePolicy(@Param('id') id: string) {
-    return this.dlpService.deletePolicy(id);
-  }
-
-  @Post('policies/:id/toggle')
-  @ApiOperation({ summary: 'Toggle policy status' })
-  async togglePolicy(@Param('id') id: string) {
-    return this.dlpService.togglePolicy(id);
-  }
 }
