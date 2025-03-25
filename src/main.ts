@@ -12,11 +12,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  // Static assets
-  app.useStaticAssets({
-    root: path.join(__dirname, '..', 'public'),
-    prefix: '/static/'
-  });
+  // Static assets are configured in AppModule using ServeStaticModule
 
   // CORS
   app.enableCors({
