@@ -1,9 +1,10 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { Knex } from 'knex';
 
-@Injectable()
 export class DlpService {
-  constructor(@Inject('KnexConnection') private readonly knex: Knex) {}
+  constructor(@Inject('KNEX_CONNECTION') private readonly knex: Knex) {}
+
+
 
   async getPolicies() {
     return this.knex('dlp_policies').select('*');
@@ -34,10 +35,7 @@ export class DlpService {
   }
 
   async updatePolicy(id: string, policyData: any) {
-    return this.knex('dlp_policies')
-      .where('id', id)
-      .update(policyData)
-      .returning('*');
+    return this.knex('dlp_policies').where('id', id).update(policyData).returning('*');
   }
 
   async deletePolicy(id: string) {
@@ -53,4 +51,3 @@ export class DlpService {
       .returning('*');
   }
 }
-

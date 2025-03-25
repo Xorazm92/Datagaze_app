@@ -10,6 +10,18 @@ import { databaseConfig } from './config/database.config';
 
 @Module({
   imports: [
+    KnexModule.forRoot({
+      config: {
+        client: 'postgresql',
+        connection: {
+          host: process.env.DB_HOST || '0.0.0.0',
+          port: parseInt(process.env.DB_PORT) || 5432,
+          user: process.env.DB_USER || 'postgres',
+          password: process.env.DB_PASSWORD || 'postgres',
+          database: process.env.DB_NAME || 'base_app',
+        },
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
