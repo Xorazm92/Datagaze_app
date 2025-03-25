@@ -1,10 +1,11 @@
-import { Inject } from '@nestjs/common';
+
+import { Injectable } from '@nestjs/common';
+import { InjectConnection } from 'nest-knexjs';
 import { Knex } from 'knex';
 
+@Injectable()
 export class DlpService {
-  constructor(@Inject('KNEX_CONNECTION') private readonly knex: Knex) {}
-
-
+  constructor(@InjectConnection() private readonly knex: Knex) {}
 
   async getPolicies() {
     return this.knex('dlp_policies').select('*');
