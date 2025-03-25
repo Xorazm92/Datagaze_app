@@ -33,16 +33,16 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    // Mock login - in real app would verify against database
-    // For demo, accept any credentials
-    const role = loginDto.email === 'admin@example.com' ? 'admin' : 'user';
-    return {
-      access_token: this.jwtService.sign({ 
-        sub: '123e4567-e89b-12d3-a456-426614174000',
-        email: loginDto.email,
-        role
-      })
-    };
+    if (loginDto.username === 'superadmin' && loginDto.password === 'superadmin') {
+      return {
+        access_token: this.jwtService.sign({ 
+          sub: '123e4567-e89b-12d3-a456-426614174000',
+          username: loginDto.username,
+          role: 'super_admin'
+        })
+      };
+    }
+    throw new UnauthorizedException('Invalid credentials');
   }
 
   async updatePassword(userId: string, updatePasswordDto: UpdatePasswordDto) {
