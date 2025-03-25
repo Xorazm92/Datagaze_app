@@ -5,31 +5,32 @@ import { ValidationPipe } from '@nestjs/common';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { corsConfig } from './config/cors.config';
+import * as path from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   app.setGlobalPrefix('api');
-  app.useStaticAssets('public');
+
+  // Static assets
+  app.useStaticAssets({
+    root: path.join(__dirname, '..', 'public'),
+    prefix: '/static/'
+  });
+
+  // CORS
   app.enableCors({
     origin: ['http://localhost:5173', 'http://localhost:3000'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
   });
-  app.enableCors(corsConfig);
-  
+
   // Global pipes and filters
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
-  
-  // Configure CORS
-  app.enableCors({
-    origin: true, // Allow all origins for development
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  });
 
+  // Swagger
   const config = new DocumentBuilder()
     .setTitle('Datagaze Platform Web')
     .setDescription('The Datagaze Platform Web API description')
