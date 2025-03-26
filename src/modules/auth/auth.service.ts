@@ -48,7 +48,7 @@ export class AuthService {
       const token = this.jwtService.sign(payload);
       this.logger.log(`Login successful for user: ${loginDto.username}`);
       
-      return {
+      const response = {
         status: 'success',
         token: token,
         user: {
@@ -57,6 +57,14 @@ export class AuthService {
           role: payload.role
         }
       };
+      
+      // Save token to localStorage on client side
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+      }
+      
+      return response;
     }
     this.logger.warn(`Login failed for user: ${loginDto.username}`);
     throw new UnauthorizedException('Invalid credentials');

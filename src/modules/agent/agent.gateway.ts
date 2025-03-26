@@ -7,7 +7,8 @@ import { AgentService } from './agent.service';
 @WebSocketGateway({
     namespace: 'terminal',
     cors: {
-        origin: '*',
+        origin: ['http://localhost:5173', 'http://localhost:3000', 'https://datagaze-front.vercel.app'],
+        credentials: true,
     },
 })
 @UseGuards(JwtAuthForComputersGuard)
