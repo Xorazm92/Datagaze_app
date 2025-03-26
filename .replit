@@ -5,8 +5,7 @@ run = "npm run start:dev"
 channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "npm run start:prod"]
-build = ["sh", "-c", "npm run build"]
+run = ["sh", "-c", "npm run start:dev"]
 
 [workflows]
 runButton = "Start Backend"
