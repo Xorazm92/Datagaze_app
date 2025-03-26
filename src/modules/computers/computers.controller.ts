@@ -8,17 +8,17 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { ComputersService } from './computers.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/enums/role.enum';
 import { ComputerEntity } from '@computers/dto/computer.entity';
 import { ComputerResponseDetailsEntity } from '@computers/dto/computer-response-details.entity';
 import { ComputerAppEntity } from '@computers/dto/computer-app.entity';
+import { JwtAuthForComputersGuard } from 'src/common/guards/jwt.auth.for.computers.guard';
 
 @ApiTags('Devices')
 @Controller('/1/device')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthForComputersGuard, RolesGuard)
 @ApiBearerAuth()
 export class ComputersController {
   constructor(private readonly computersService: ComputersService) {}
