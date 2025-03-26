@@ -10,8 +10,6 @@ import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
-const execAsync = promisify(exec);
-
 @Injectable()
 export class AgentService extends BaseService<ComputerInterface> {
     constructor(private readonly authService: AgentAuthService) {
@@ -98,15 +96,16 @@ export class AgentService extends BaseService<ComputerInterface> {
             throw new Error(`Command execution failed: ${error.message}`);
         }
     }
-}
-async executeCommand(command: string): Promise<string> {
-    try {
-        const { stdout, stderr } = await execAsync(command);
-        if (stderr) {
-            throw new Error(stderr);
+
+    async executeCommand(command: string): Promise<string> {
+        try {
+            const { stdout, stderr } = await execAsync(command);
+            if (stderr) {
+                throw new Error(stderr);
+            }
+            return stdout;
+        } catch (error) {
+            throw new Error(`Command execution failed: ${error.message}`);
         }
-        return stdout;
-    } catch (error) {
-        throw new Error(`Command execution failed: ${error.message}`);
     }
 }
