@@ -26,7 +26,7 @@ import {
 } from './dto/desktop.dto';
 
 @ApiTags('Desktop')
-@Controller('api/1/desktop')
+@Controller('/1/desktop')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class DesktopController {

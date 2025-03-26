@@ -25,7 +25,7 @@ import { Roles } from './decorators/roles.decorator';
 import { Role } from './enums/role.enum';
 
 @ApiTags('Auth')
-@Controller('api/1/auth')
+@Controller('/1/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

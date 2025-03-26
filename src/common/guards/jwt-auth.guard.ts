@@ -1,43 +1,47 @@
-// import { Injectable, ExecutionContext } from '@nestjs/common';
+// import {
+//   Injectable,
+//   ExecutionContext,
+//   UnauthorizedException,
+//   Logger,
+// } from '@nestjs/common';
 // import { AuthGuard } from '@nestjs/passport';
 
 // @Injectable()
 // export class JwtAuthGuard extends AuthGuard('jwt') {
-//   canActivate(context: ExecutionContext) {
+//   private readonly logger = new Logger(JwtAuthGuard.name);
 
-//     let data =  super.canActivate(context);
-//     console.log(context);
-//     return data
-//   }
-
-// }
-
-// import { Injectable, ExecutionContext } from '@nestjs/common';
-// import { AuthGuard } from '@nestjs/passport';
-// import { error, log } from 'console';
-// import { Observable } from 'rxjs';
-
-// @Injectable()
-// export class JwtAuthGuard extends AuthGuard('jwt') {
 //   async canActivate(context: ExecutionContext): Promise<any> {
 //     try {
 //       const request = context.switchToHttp().getRequest();
-//       console.log(context,request.headers)
-//       ;
-//       const data = await super.canActivate(context);
-//       console.log(data);
+//       this.logger.log('Headers: ' + JSON.stringify(request.headers)); // Token bor-yo‘qligini tekshirish
 
-//       if (!context || !data) {
-//         throw new Error('Unauthorized access');
+//       const isAuthenticated = await super.canActivate(context);
+//       this.logger.log('Auth Status: ' + isAuthenticated);
+
+//       if (!isAuthenticated) {
+//         throw new UnauthorizedException(
+//           'Foydalanuvchi autentifikatsiyadan o‘tmadi',
+//         );
 //       }
-//       return data;
-//     } catch (error) {
-//       console.log(error);
-//       throw new Error(error);
 
+//       return isAuthenticated;
+//     } catch (error) {
+//       this.logger.error('Auth Error: ' + error.message);
+//       throw new UnauthorizedException('Token noto‘g‘ri yoki mavjud emas');
 //     }
 //   }
+
+//   handleRequest(err, user, info) {
+//     if (err || !user) {
+//       this.logger.error('JWT Auth Failed: ' + JSON.stringify(info));
+//       throw new UnauthorizedException(
+//         'Token noto‘g‘ri yoki mavjud emas',
+//       );
+//     }
+//     return user;
+//   }
 // }
+
 import {
   Injectable,
   ExecutionContext,
@@ -50,29 +54,32 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext): Promise<any> {
     try {
       const request = context.switchToHttp().getRequest();
-      console.log('Headers:', request.headers); // Token bor-yo‘qligini tekshirish
+      const authHeader = request.headers.authorization;
 
-      const isAuthenticated = await super.canActivate(context);
-      console.log('Auth Status:', isAuthenticated);
-
-      if (!isAuthenticated) {
-        throw new UnauthorizedException(
-          'Foydalanuvchi autentifikatsiyadan o‘tmadi',
-        );
+      if (!authHeader) {
+        throw new UnauthorizedException('No authorization header');
       }
 
+      const [type, token] = authHeader.split(' ');
+      if (type !== 'Bearer') {
+        throw new UnauthorizedException('Invalid token type');
+      }
+
+      if (!token) {
+        throw new UnauthorizedException('No token provided');
+      }
+
+      const isAuthenticated = await super.canActivate(context);
       return isAuthenticated;
     } catch (error) {
-      console.error('Auth Error:', error.message);
-      throw new UnauthorizedException('Token noto‘g‘ri yoki mavjud emas');
+      throw new UnauthorizedException(error.message || 'Authentication failed');
     }
   }
 
   handleRequest(err, user, info) {
     if (err || !user) {
-      console.error('JWT Auth Failed:', info);
       throw new UnauthorizedException(
-        info || 'Token noto‘g‘ri yoki mavjud emas',
+        info?.message || 'Invalid token or user not found'
       );
     }
     return user;

@@ -17,7 +17,7 @@ import { ComputerResponseDetailsEntity } from '@computers/dto/computer-response-
 import { ComputerAppEntity } from '@computers/dto/computer-app.entity';
 
 @ApiTags('Devices')
-@Controller('api/1/device')
+@Controller('/1/device')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class ComputersController {

@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   ConflictException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection } from 'nest-knexjs';
@@ -15,6 +16,8 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectConnection() private readonly knex: Knex,
     private readonly jwtService: JwtService,
@@ -33,18 +36,29 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
+    this.logger.log(`Login attempt for user: ${loginDto.username}`);
+    
     if (loginDto.username === 'superadmin' && loginDto.password === 'superadmin') {
-      const token = this.jwtService.sign({ 
+      const payload = { 
         sub: '123e4567-e89b-12d3-a456-426614174000',
         username: loginDto.username,
-        role: 'super_admin'
-      });
+        role: 'superadmin'
+      };
+      
+      const token = this.jwtService.sign(payload);
+      this.logger.log(`Login successful for user: ${loginDto.username}`);
       
       return {
-        access_token: token,
-        redirect_url: '/dashboard'
+        status: 'success',
+        token: token,
+        user: {
+          id: payload.sub,
+          username: payload.username,
+          role: payload.role
+        }
       };
     }
+    this.logger.warn(`Login failed for user: ${loginDto.username}`);
     throw new UnauthorizedException('Invalid credentials');
   }
 
