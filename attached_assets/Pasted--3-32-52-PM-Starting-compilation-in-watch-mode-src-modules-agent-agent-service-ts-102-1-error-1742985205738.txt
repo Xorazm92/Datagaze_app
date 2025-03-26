@@ -1,0 +1,71 @@
+[3:32:52 PM] Starting compilation in watch mode...
+
+src/modules/agent/agent.service.ts:102:1 - error TS1434: Unexpected keyword or identifier.
+
+102 async executeCommand(command: string): Promise<string> {
+    ~~~~~
+
+src/modules/agent/agent.service.ts:102:29 - error TS1005: ',' expected.
+
+102 async executeCommand(command: string): Promise<string> {
+                                ~
+
+src/modules/agent/agent.service.ts:102:38 - error TS1005: ';' expected.
+
+102 async executeCommand(command: string): Promise<string> {
+                                         ~
+
+src/modules/agent/agent.service.ts:103:9 - error TS1005: ':' expected.
+
+103     try {
+            ~
+
+src/modules/agent/agent.service.ts:104:15 - error TS1005: ':' expected.
+
+104         const { stdout, stderr } = await execAsync(command);
+                  ~
+
+src/modules/agent/agent.service.ts:104:60 - error TS1005: ',' expected.
+
+104         const { stdout, stderr } = await execAsync(command);
+                                                               ~
+
+src/modules/agent/agent.service.ts:108:9 - error TS1005: ',' expected.
+
+108         return stdout;
+            ~~~~~~
+
+src/modules/agent/agent.service.ts:108:16 - error TS1005: ':' expected.
+
+108         return stdout;
+                   ~~~~~~
+
+src/modules/agent/agent.service.ts:108:22 - error TS1005: ',' expected.
+
+108         return stdout;
+                         ~
+
+src/modules/agent/agent.service.ts:109:7 - error TS1005: ',' expected.
+
+109     } catch (error) {
+          ~~~~~
+
+[3:32:55 PM] Found 10 errors. Watching for file changes.
+
+/home/xorazm/DataGaze_app/Datagaze_app-master/dist/src/modules/agent/agent.service.js:20
+const execAsync = (0, util_1.promisify)(child_process_1.exec);
+      ^
+
+SyntaxError: Identifier 'execAsync' has already been declared
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (/home/xorazm/DataGaze_app/Datagaze_app-master/src/modules/agent/agent.controller.ts:4:1)
+
+Node.js v22.14.0
