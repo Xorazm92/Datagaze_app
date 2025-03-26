@@ -18,7 +18,7 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { DesktopService } from './desktop.service';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { AuthGuard } from '../../common/guards/jwt-auth.guard';
 import {
   InstallWebApplicationDto,
   WebApplicationEntity,
@@ -27,7 +27,7 @@ import {
 
 @ApiTags('Desktop')
 @Controller('/1/desktop')
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard)
 @ApiBearerAuth()
 export class DesktopController {
   constructor(private readonly desktopService: DesktopService) {}

@@ -4,8 +4,6 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { corsConfig } from './config/cors.config';
-import * as path from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,7 +14,11 @@ async function bootstrap() {
 
   // CORS
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://datagaze-front.vercel.app'],
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://datagaze-front.vercel.app',
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
