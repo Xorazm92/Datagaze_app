@@ -11,6 +11,14 @@ socket.on('connect', () => {
   console.log('Connected to terminal server');
 });
 
+socket.on('connect_error', (error) => {
+  console.error('Connection error:', error);
+});
+
+socket.on('error', (error) => {
+  console.error('Socket error:', error);
+});
+
 socket.on('command_response', (data) => {
   if (data.success) {
     console.log('Command output:', data.result);
