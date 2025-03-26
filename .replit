@@ -5,10 +5,11 @@ run = "npm run start:dev"
 channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "npm run start:dev"]
+run = ["sh", "-c", "npm run start:prod"]
+build = ["sh", "-c", "npm run build"]
 
 [workflows]
-runButton = "Run"
+runButton = "Run Server"
 
 [[workflows.workflow]]
 name = "Run"
@@ -18,6 +19,15 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run start:dev"
+
+[[workflows.workflow]]
+name = "Run Server"
+author = 40853903
+mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
