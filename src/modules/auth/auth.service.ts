@@ -34,12 +34,15 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     if (loginDto.username === 'superadmin' && loginDto.password === 'superadmin') {
+      const token = this.jwtService.sign({ 
+        sub: '123e4567-e89b-12d3-a456-426614174000',
+        username: loginDto.username,
+        role: 'super_admin'
+      });
+      
       return {
-        access_token: this.jwtService.sign({ 
-          sub: '123e4567-e89b-12d3-a456-426614174000',
-          username: loginDto.username,
-          role: 'super_admin'
-        })
+        access_token: token,
+        redirect_url: '/dashboard'
       };
     }
     throw new UnauthorizedException('Invalid credentials');
