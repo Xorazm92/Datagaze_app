@@ -8,6 +8,25 @@ import { DesktopConnectionDto, CreateWebApplicationDto } from './dto/desktop-con
 @ApiTags('Desktop')
 @Controller('api/1/desktop')
 export class DesktopController {
+  @Post('install/:id')
+  @ApiOperation({ summary: 'Install Web Application' })
+  @ApiResponse({ status: 200, description: 'Application Installed Successfully' })
+  async installApplication(@Param('id') id: string) {
+    return this.desktopService.installApplication(id);
+  }
+
+  @Delete('uninstall/:id')
+  @ApiOperation({ summary: 'Uninstall Web Application' })
+  @ApiResponse({ status: 200, description: 'Application Uninstalled Successfully' })
+  async uninstallApplication(@Param('id') id: string) {
+    return this.desktopService.uninstallApplication(id);
+  }
+
+  @Post('execute-command')
+  @ApiOperation({ summary: 'Execute Command on Remote Desktop' })
+  async executeCommand(@Body() command: { command: string }) {
+    return this.desktopService.executeCommand(command.command);
+  }
   constructor(private readonly desktopService: DesktopService) {}
 
   @Get('web-applications')

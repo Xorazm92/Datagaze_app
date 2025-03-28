@@ -14,6 +14,7 @@ import { databaseConfig } from './config/database.config';
 
 @Module({
   imports: [
+    TerminalModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
       serveRoot: '/',
