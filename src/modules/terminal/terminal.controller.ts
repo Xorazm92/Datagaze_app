@@ -8,6 +8,24 @@ export class TerminalController {
   constructor(private readonly terminalService: TerminalService) {}
 
   @Post('connect')
+  @ApiOperation({ summary: 'Connect to SSH server' })
+  async connect(@Body() connectionData: SSHConnectionDto) {
+    return this.terminalService.connect(connectionData);
+  }
+
+  @Post('execute')
+  @ApiOperation({ summary: 'Execute SSH command' })
+  async executeCommand(@Body() commandData: SSHCommandDto) {
+    return this.terminalService.executeCommand(commandData);
+  }
+
+  @Get('output/:sessionId')
+  @ApiOperation({ summary: 'Get command output' })
+  async getOutput(@Param('sessionId') sessionId: string) {
+    return this.terminalService.getOutput(sessionId);
+  }
+
+  @Post('connect')
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @ApiOperation({ summary: 'Connect to SSH server' })
   async connect(@Body() connectionData: SSHConnectionDto) {

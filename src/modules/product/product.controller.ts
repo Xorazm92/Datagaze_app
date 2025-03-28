@@ -1,23 +1,32 @@
-
-import { Controller, Post, Body, Param } from '@nestjs/common';
+import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { SystemRequirementsDto } from './dto/system-requirements.dto';
 import { InstallationScriptDto } from './dto/installation-script.dto';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import {ApiOperation} from '@nestjs/swagger';
+
 
 @Controller('products')
 export class ProductController {
+  constructor(private readonly productService: ProductService) {}
+
   @Post(':id/requirements')
-  async setSystemRequirements(
-    @Param('id') id: string,
-    @Body() requirements: SystemRequirementsDto
+  @ApiOperation({ summary: 'Add system requirements' })
+  async addSystemRequirements(
+    @Param('id') productId: string,
+    @Body() requirementsDto: SystemRequirementsDto,
   ) {
-    return this.productService.setSystemRequirements(id, requirements);
+    return this.productService.addSystemRequirements(productId, requirementsDto);
   }
 
   @Post(':id/installation-script')
-  async setInstallationScript(
-    @Param('id') id: string,
-    @Body() script: InstallationScriptDto
+  @ApiOperation({ summary: 'Add installation script' })
+  async addInstallationScript(
+    @Param('id') productId: string,
+    @Body() scriptDto: InstallationScriptDto,
   ) {
-    return this.productService.setInstallationScript(id, script);
+    return this.productService.addInstallationScript(productId, scriptDto);
   }
 }

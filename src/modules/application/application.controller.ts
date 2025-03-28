@@ -1,4 +1,3 @@
-
 import { Controller, Put, Delete, Param, Body } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -6,7 +5,6 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 @Controller('applications')
 export class ApplicationController {
   @Put(':id/status')
-  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @ApiOperation({ summary: 'Update application status' })
   async updateStatus(
     @Param('id') id: string,
@@ -16,7 +14,6 @@ export class ApplicationController {
   }
 
   @Delete(':id')
-  @Roles(Role.SUPER_ADMIN)
   @ApiOperation({ summary: 'Delete application' })
   async deleteApplication(@Param('id') id: string) {
     return this.applicationService.deleteApplication(id);

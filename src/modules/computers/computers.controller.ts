@@ -27,6 +27,31 @@ import { UpdateApplicationDto } from './dto/update-application.dto'; // Assumed 
 export class ComputersController {
   constructor(private readonly computersService: ComputersService) {}
 
+  @Get(':id/applications')
+  @ApiOperation({ summary: 'Get list of installed applications' })
+  async getInstalledApplications(@Param('id') computerId: string) {
+    return this.computersService.getInstalledApplications(computerId);
+  }
+
+  @Post(':id/applications/install')
+  @ApiOperation({ summary: 'Install new application' })
+  async installApplication(
+    @Param('id') computerId: string,
+    @Body() installDto: InstallApplicationDto,
+  ) {
+    return this.computersService.installApplication(computerId, installDto);
+  }
+
+  @Put(':id/applications/:appId')
+  @ApiOperation({ summary: 'Update installed application' })
+  async updateApplication(
+    @Param('id') computerId: string,
+    @Param('appId') appId: string,
+    @Body() updateDto: UpdateApplicationDto,
+  ) {
+    return this.computersService.updateApplication(computerId, appId, updateDto);
+  }
+
   @Get('computers')
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @ApiOperation({ summary: 'Get all computers' })
