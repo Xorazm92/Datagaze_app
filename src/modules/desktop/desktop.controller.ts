@@ -1,46 +1,76 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+
+import { Controller, Get, Post, Body, Param, Delete, UseInterceptors, UploadedFiles, Put } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiConsumes } from '@nestjs/swagger';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { DesktopService } from './desktop.service';
-import { DesktopConnectionDto } from './dto/desktop-connection.dto';
-import { DesktopEntity } from './entities/desktop.entity';
+import { DesktopConnectionDto, CreateWebApplicationDto } from './dto/desktop-connection.dto';
 
 @ApiTags('Desktop')
-@Controller('api/desktop')
+@Controller('api/1/desktop')
 export class DesktopController {
   constructor(private readonly desktopService: DesktopService) {}
 
-  @Post('connect')
-  @ApiOperation({ summary: 'Connect to a desktop' })
-  @ApiResponse({ status: 201, description: 'Successfully connected', type: DesktopEntity })
-  connect(@Body() connectionDto: DesktopConnectionDto) {
-    return this.desktopService.connect(connectionDto);
-  }
-
-  @Get()
-  @ApiOperation({ summary: 'Get all connected desktops' })
-  @ApiResponse({ status: 200, description: 'List of desktops', type: [DesktopEntity] })
-  findAll() {
-    return this.desktopService.findAll();
+  @Get('web-applications')
+  @ApiOperation({ summary: 'List of Web Applications' })
+  @ApiResponse({ status: 200, description: 'List of Web Applications' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  findAllWebApplications() {
+    return this.desktopService.findAllWebApplications();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get desktop by ID' })
-  @ApiResponse({ status: 200, description: 'Desktop details', type: DesktopEntity })
-  findOne(@Param('id') id: string) {
-    return this.desktopService.findOne(id);
+  @ApiOperation({ summary: 'Get Web Application by ID' })
+  @ApiResponse({ status: 200, description: 'Web Application' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Web Application Not Found' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  findWebApplicationById(@Param('id') id: string) {
+    return this.desktopService.findWebApplicationById(id);
   }
 
-  @Put(':id/disconnect')
-  @ApiOperation({ summary: 'Disconnect a desktop' })
-  @ApiResponse({ status: 200, description: 'Desktop disconnected' })
-  disconnect(@Param('id') id: string) {
-    return this.desktopService.disconnect(id);
+  @Post('install/:id')
+  @ApiOperation({ summary: 'Install Web Application' })
+  @ApiResponse({ status: 200, description: 'Web Application Installed' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Web Application Not Found' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  install(@Param('id') id: string, @Body() connectionDto: DesktopConnectionDto) {
+    return this.desktopService.installWebApplication(id, connectionDto);
   }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Remove desktop' })
-  @ApiResponse({ status: 200, description: 'Desktop removed' })
-  remove(@Param('id') id: string) {
-    return this.desktopService.remove(id);
+  @Delete('uninstall/:id')
+  @ApiOperation({ summary: 'Uninstall Web Application' })
+  @ApiResponse({ status: 200, description: 'Web Application Uninstalled' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Web Application Not Found' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  uninstall(@Param('id') id: string) {
+    return this.desktopService.uninstallWebApplication(id);
+  }
+
+  @Post('create')
+  @ApiOperation({ summary: 'Create Web Application' })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'icon', maxCount: 1 },
+    { name: 'serverFile', maxCount: 1 },
+    { name: 'agentFile', maxCount: 1 },
+  ]))
+  @ApiResponse({ status: 201, description: 'Web Application Created' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  create(@Body() createDto: CreateWebApplicationDto, @UploadedFiles() files: any) {
+    return this.desktopService.createWebApplication(createDto, files);
+  }
+
+  @Post('transfer/:id')
+  @ApiOperation({ summary: 'Transfer Web Application' })
+  @ApiResponse({ status: 200, description: 'Web Application Transferred to Given IP' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Web Application Not Found' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  transfer(@Param('id') id: string, @Body() connectionDto: DesktopConnectionDto) {
+    return this.desktopService.transferWebApplication(id, connectionDto);
   }
 }

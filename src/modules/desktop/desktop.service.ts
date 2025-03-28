@@ -1,117 +1,89 @@
-import {
-  Injectable,
-  NotFoundException,
-  InternalServerErrorException,
-} from '@nestjs/common';
-import {
-  WebApplicationEntity,
-  WebApplicationDetailsEntity,
-} from './dto/desktop.dto';
+import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { DesktopConnectionDto } from './dto/desktop-connection.dto';
-import { DesktopEntity } from './entities/desktop.entity';
+import { DesktopConnectionDto, CreateWebApplicationDto } from './dto/desktop-connection.dto';
+
+interface WebApplication {
+  id: string;
+  applicationName: string;
+  webVersion: string;
+  pathToIcon: string;
+  isInstalled: boolean;
+  publisher?: string;
+  releaseDate?: string;
+  cpu?: string;
+  ram?: string;
+  storage?: string;
+  networkBandwidth?: string;
+}
 
 @Injectable()
 export class DesktopService {
-  private webApplications: WebApplicationEntity[] = [
+  private webApplications: WebApplication[] = [
     {
       id: '832f6fa7-dad4-430a-9206-5fb118d36f26',
-      application_name: 'DLP',
-      version: '4.7.2',
+      applicationName: 'DLP',
+      webVersion: '4.7.2',
       pathToIcon: '/dlp.png',
-      is_installed: false,
-    },
-    {
-      id: '18903dfc-0903-4423-a620-8fa8e9e8663e',
-      application_name: 'WAF',
-      version: '2.1.0',
-      pathToIcon: '/waf.png',
-      is_installed: true,
-    },
-  ];
-
-  private webApplicationDetails: {
-    [key: string]: WebApplicationDetailsEntity;
-  } = {
-    '832f6fa7-dad4-430a-9206-5fb118d36f26': {
-      id: '832f6fa7-dad4-430a-9206-5fb118d36f26',
-      application_name: 'DLP',
-      version: '4.7.2',
-      pathToIcon: '/dlp.png',
-      is_installed: false,
+      isInstalled: false,
       publisher: 'Datagaze LLC',
-      release_date: '05.10.2023',
+      releaseDate: '05.10.2023',
       cpu: '2-cores',
       ram: '2 GB',
       storage: '64 GB SSD',
-      network_bandwidth: '100 Mbps Ethernet Port',
+      networkBandwidth: '100 Mbps Ethernet Port',
     },
-    '18903dfc-0903-4423-a620-8fa8e9e8663e': {
+    {
       id: '18903dfc-0903-4423-a620-8fa8e9e8663e',
-      application_name: 'WAF',
-      version: '2.1.0',
+      applicationName: 'WAF',
+      webVersion: '2.1.0',
       pathToIcon: '/waf.png',
-      is_installed: true,
+      isInstalled: true,
       publisher: 'Datagaze LLC',
-      release_date: '02.12.2022',
+      releaseDate: '02.12.2022',
       cpu: '2-cores',
       ram: '4 GB',
       storage: '128 GB SSD',
-      network_bandwidth: '1 Gbps Ethernet Port',
+      networkBandwidth: '1 Gbps Ethernet Port',
     },
-  };
+  ];
 
-  findAllWebApplications(): WebApplicationEntity[] {
+  findAllWebApplications(): WebApplication[] {
     try {
-      return this.webApplications;
+      return this.webApplications.map(({ id, applicationName, webVersion, pathToIcon, isInstalled }) => ({
+        id,
+        applicationName,
+        webVersion,
+        pathToIcon,
+        isInstalled,
+      }));
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to fetch web applications',
-      );
+      throw new InternalServerErrorException('Failed to fetch web applications');
     }
   }
 
-  findWebApplicationById(id: string): WebApplicationDetailsEntity {
-    try {
-      const webApp = this.webApplicationDetails[id];
-      if (!webApp) {
-        throw new NotFoundException(`Web Application with ID ${id} not found`);
-      }
-      return webApp;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new InternalServerErrorException(
-        'Failed to fetch web application details',
-      );
-    }
-  }
-
-  async installWebApplication(id: string, credentials: any): Promise<void> {
+  findWebApplicationById(id: string): WebApplication {
     try {
       const webApp = this.webApplications.find((app) => app.id === id);
       if (!webApp) {
         throw new NotFoundException(`Web Application with ID ${id} not found`);
       }
-
-      // Update installation status
-      webApp.is_installed = true;
-      if (this.webApplicationDetails[id]) {
-        this.webApplicationDetails[id].is_installed = true;
-      }
-
-      // In a real application, you would use the SSH credentials to install the application
-      // on the remote server
-
-      return;
+      return webApp;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
+      if (error instanceof NotFoundException) throw error;
+      throw new InternalServerErrorException('Failed to fetch web application details');
+    }
+  }
+
+  async installWebApplication(id: string, connectionDto: DesktopConnectionDto): Promise<void> {
+    try {
+      const webApp = this.webApplications.find((app) => app.id === id);
+      if (!webApp) {
+        throw new NotFoundException(`Web Application with ID ${id} not found`);
       }
-      throw new InternalServerErrorException(
-        'Failed to install web application',
-      );
+      webApp.isInstalled = true;
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+      throw new InternalServerErrorException('Failed to install web application');
     }
   }
 
@@ -121,27 +93,43 @@ export class DesktopService {
       if (!webApp) {
         throw new NotFoundException(`Web Application with ID ${id} not found`);
       }
-
-      // Update installation status
-      webApp.is_installed = false;
-      if (this.webApplicationDetails[id]) {
-        this.webApplicationDetails[id].is_installed = false;
-      }
-
-      // In a real application, you would connect to the remote server and uninstall the application
-
-      return;
+      webApp.isInstalled = false;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
+      if (error instanceof NotFoundException) throw error;
+      throw new InternalServerErrorException('Failed to uninstall web application');
+    }
+  }
+
+  async createWebApplication(createDto: CreateWebApplicationDto, files: any): Promise<{ status: string; message: string }> {
+    try {
+      const newWebApp: WebApplication = {
+        id: uuidv4(),
+        applicationName: createDto.applicationName,
+        webVersion: createDto.webVersion,
+        pathToIcon: files.icon ? `/uploads/${files.icon[0].filename}` : '/default-icon.png',
+        isInstalled: false,
+        publisher: createDto.publisher,
+      };
+      this.webApplications.push(newWebApp);
+      return { status: 'success', message: 'Web application created successfully' };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create web application');
+    }
+  }
+
+  async transferWebApplication(id: string, connectionDto: DesktopConnectionDto): Promise<void> {
+    try {
+      const webApp = this.webApplications.find((app) => app.id === id);
+      if (!webApp) {
+        throw new NotFoundException(`Web Application with ID ${id} not found`);
       }
-      throw new InternalServerErrorException(
-        'Failed to uninstall web application',
-      );
+      // Implementation for transfer logic would go here
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+      throw new InternalServerErrorException('Failed to transfer web application');
     }
   }
 }
-
 
 @Injectable()
 export class DesktopService2 {
