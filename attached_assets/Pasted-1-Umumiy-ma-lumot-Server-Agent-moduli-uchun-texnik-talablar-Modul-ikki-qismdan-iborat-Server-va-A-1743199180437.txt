@@ -1,0 +1,33 @@
+1. Umumiy ma'lumot Server-Agent moduli uchun texnik talablar. Modul ikki qismdan iborat: Server va Agent. Agent qismi xodimlarning kompyuterlariga o‘rnatiladi va server bilan WebSocket orqali aloqa o‘rnatadi.
+2. Agentning asosiy vazifalari
+Agentni ro‘yxatdan o‘tkazish
+Agent o‘rnatilgandan so‘ng server bilan bog‘lanadi va tizim haqida ma’lumot yuboradi.
+Ushbu ma’lumotlar keyinchalik tizim monitoringi va agentni boshqarish uchun ishlatiladi.
+Aloqa token orqali amalga oshirilishi kerak.
+O‘rnatilgan dasturlar ro‘yxatini yuborish
+Agent tizimda mavjud barcha dasturlar ro‘yxatini serverga jo‘natadi.
+Server ushbu ma’lumotlar asosida tizim monitoringini olib boradi.
+Dasturlar nomi, versiyasi, hajmi va unikal identifikatori kiritilishi lozim.
+Dasturlarni o‘chirish
+Server agentga ma’lum bir yoki bir nechta dasturlarni o‘chirish buyrug‘ini yuboradi.
+Agent dasturlarni ketma-ket o‘chiradi va natijani serverga qaytaradi.
+O‘chirish jarayoni yakunlanganda, har bir dastur bo‘yicha holat qaytarilishi kerak.
+Dasturlarni yuklash va o‘rnatish
+Server agentga dastur faylini yuboradi va uni tizimga o‘rnatishni talab qiladi.
+Agent dastur faylini yuklab, vaqtincha saqlaydi va o‘rnatishni amalga oshiradi.
+O‘rnatish jarayoni muvaffaqiyatli tugagach, status qaytarilishi kerak.
+Agentni yangilash
+Server agentga yangi versiyani yuklab olish va yangilash buyrug‘ini yuboradi.
+Agent yangi versiyani yuklab olib, yangilanishni amalga oshiradi.
+Yangilanish jarayonining muvaffaqiyatli tugagani to‘g‘risida serverga hisobot yuboriladi.
+Agentni o‘chirish
+Server agentni kompyuterdan o‘chirish uchun buyruq yuboradi.
+Agent o‘zini tizimdan o‘chirib, serverga natija haqida xabar beradi.
+3. Xavfsizlik talablari
+Barcha aloqa WebSocket orqali shifrlangan holda amalga oshirilishi lozim.
+Har bir agent server bilan aloqaga chiqishda token orqali identifikatsiyadan o‘tishi kerak.
+4. Qo‘shimcha talablar
+Agent tizim resurslariga minimal ta’sir ko‘rsatishi kerak.
+Loglarni yuritish va serverga jo‘natish mexanizmi bo‘lishi lozim.
+Modullar kengaytirish va qo‘shimcha funksiyalarni qo‘shish uchun moslashuvchan bo‘lishi kerak.
+
