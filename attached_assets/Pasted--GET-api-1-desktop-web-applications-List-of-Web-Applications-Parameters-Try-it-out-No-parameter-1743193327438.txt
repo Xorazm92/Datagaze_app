@@ -1,0 +1,427 @@
+
+
+
+GET
+/api/1/desktop/web-applications
+List of Web Applications
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+List of Web Applications
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "id": "832f6fa7-dad4-430a-9206-5fb118d36f26",
+    "applicationName": "DLP",
+    "webVersion": "4.7.2",
+    "pathToIcon": "/dlp.png",
+    "isInstalled": false
+  }
+]
+No links
+401	
+Unauthorized
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "status": "error",
+  "message": "Unauthorized access"
+}
+No links
+500	
+Internal Server Error
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "statusCode": 500,
+  "message": "Failed to fetch web applications",
+  "error": "Internal Server Error"
+}
+No links
+
+GET
+/api/1/desktop/{id}
+Get Web Application by ID
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Web Application
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "18903dfc-0903-4423-a620-8fa8e9e8663e",
+  "applicationName": "WAF",
+  "webVersion": "2.1.0",
+  "pathToIcon": "/waf.png",
+  "publisher": "Datagaze LLC",
+  "releaseDate": "02.12.2022",
+  "cpu": "2-cores",
+  "ram": "4 GB",
+  "storage": "128 GB SSD",
+  "networkBandwidth": "1 Gbps Ethernet Port"
+}
+No links
+401	
+Unauthorized
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "status": "error",
+  "message": "Unauthorized access"
+}
+No links
+404	
+Web Application Not Found
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "statusCode": 404,
+  "message": "Web Application with ID xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx not found",
+  "error": "Not Found"
+}
+No links
+500	
+Internal Server Error
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "statusCode": 500,
+  "message": "Failed to fetch web application details",
+  "error": "Internal Server Error"
+}
+No links
+
+POST
+/api/1/desktop/install/{id}
+Install Web Application
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "host": "209.38.250.43",
+  "port": 22,
+  "username": "root",
+  "password": "Datagaze2134$Platform"
+}
+Responses
+Code	Description	Links
+200	
+Web Application Installed
+
+No links
+401	
+Unauthorized
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "status": "error",
+  "message": "Unauthorized access"
+}
+No links
+404	
+Web Application Not Found
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "statusCode": 404,
+  "message": "Web Application with ID xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx not found",
+  "error": "Not Found"
+}
+No links
+500	
+Internal Server Error
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "statusCode": 500,
+  "message": "Failed to install web application",
+  "error": "Internal Server Error"
+}
+No links
+
+DELETE
+/api/1/desktop/uninstall/{id}
+Uninstall Web Application
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Web Application Uninstalled
+
+No links
+401	
+Unauthorized
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "status": "error",
+  "message": "Unauthorized access"
+}
+No links
+404	
+Web Application Not Found
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "statusCode": 404,
+  "message": "Web Application with ID xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx not found",
+  "error": "Not Found"
+}
+No links
+500	
+Internal Server Error
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "statusCode": 500,
+  "message": "Failed to uninstall web application",
+  "error": "Internal Server Error"
+}
+No links
+
+POST
+/api/1/desktop/create
+Create Web Application
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+multipart/form-data
+icon *
+string
+Icon of Product
+
+applicationName *
+string
+Name of Product
+
+publisher *
+string
+Publisher of Product
+
+webVersion *
+string
+Version of Web Product
+
+agentVersion *
+string
+Version of Agent Product
+
+installScript *
+string
+Install Scripts in text form
+
+serverFile *
+string($binary)
+Any type of server-side file
+
+agentFile *
+string($binary)
+Any type of client-side file
+
+Responses
+Code	Description	Links
+201	
+Web Application Created
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "status": "success",
+  "message": "Web application created successfully"
+}
+No links
+401	
+Unauthorized
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "status": "error",
+  "message": "Unauthorized access"
+}
+No links
+500	
+Internal Server Error
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "statusCode": 500,
+  "message": "Failed to create web application",
+  "error": "Internal Server Error"
+}
+No links
+
+POST
+/api/1/desktop/transfer/{id}
+Transfer Web Application
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "host": "209.38.250.43",
+  "port": 22,
+  "username": "root",
+  "password": "Datagaze2134$Platform"
+}
+Responses
+Code	Description	Links
+200	
+Web Application Transferred to Given IP
+
+No links
+401	
+Unauthorized
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "status": "error",
+  "message": "Unauthorized access"
+}
+No links
+404	
+Web Application Not Found
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "statusCode": 404,
+  "message": "Web Application with ID xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx not found",
+  "error": "Not Found"
+}
+No links
+500	
+Internal Server Error
+
+Media type
+
+application/json
+Example Value
+Schema
+{
+  "statusCode": 500,
+  "message": "Failed to transfer web application",
+  "error": "Internal Server Error"
+}
