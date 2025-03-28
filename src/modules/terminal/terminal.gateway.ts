@@ -4,8 +4,9 @@ import { Socket } from 'socket.io';
 import * as SSH2Promise from 'ssh2-promise';
 
 @WebSocketGateway({
+  namespace: 'terminal',
   cors: {
-    origin: ['http://localhost:5173', 'https://datagaze-front.vercel.app'],
+    origin: '*',
     credentials: true
   }
 })
@@ -25,8 +26,10 @@ export class TerminalGateway {
       await ssh.connect();
       this.connections.set(client.id, ssh);
       
+      client.emit('connected', { success: true });
       return { success: true };
     } catch (error) {
+      client.emit('error', { message: error.message });
       return { success: false, error: error.message };
     }
   }
@@ -43,9 +46,20 @@ export class TerminalGateway {
       }
 
       const result = await ssh.exec(data.command);
+      client.emit('command_response', { success: true, result });
       return { success: true, result };
     } catch (error) {
+      client.emit('command_response', { success: false, error: error.message });
       return { success: false, error: error.message };
+    }
+  }
+
+  @SubscribeMessage('disconnect')
+  async handleDisconnect(@ConnectedSocket() client: Socket) {
+    const ssh = this.connections.get(client.id);
+    if (ssh) {
+      await ssh.close();
+      this.connections.delete(client.id);
     }
   }
 }
