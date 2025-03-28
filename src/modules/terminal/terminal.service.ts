@@ -19,6 +19,24 @@ export class TerminalService {
   }
 
   async executeCommand(ssh: SSH2Promise, command: string): Promise<string> {
-    return await ssh.exec(command);
+    try {
+      const result = await ssh.exec(command);
+      return result;
+    } catch (error) {
+      throw new Error(`Command execution failed: ${error.message}`);
+    }
+  }
+
+  async getCommandHistory(connectionId: string): Promise<string[]> {
+    // Implementation for command history
+    return [];
+  }
+
+  async disconnect(connectionId: string): Promise<void> {
+    const connection = this.connections.get(connectionId);
+    if (connection) {
+      await connection.close();
+      this.connections.delete(connectionId);
+    }
   }
 }

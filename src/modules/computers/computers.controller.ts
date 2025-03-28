@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, Post, Body, Put, Delete } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -15,6 +15,10 @@ import { Role } from '../auth/enums/role.enum';
 import { ComputerEntity } from '@computers/dto/computer.entity';
 import { ComputerResponseDetailsEntity } from '@computers/dto/computer-response-details.entity';
 import { ComputerAppEntity } from '@computers/dto/computer-app.entity';
+// Added imports for new endpoints
+import { InstallApplicationDto } from './dto/install-application.dto'; // Assumed DTO
+import { UpdateApplicationDto } from './dto/update-application.dto'; // Assumed DTO
+
 
 @ApiTags('Devices')
 @Controller('/1/device')
@@ -182,5 +186,44 @@ export class ComputersController {
   })
   async getComputerApps(@Param('id') id: string): Promise<ComputerAppEntity[]> {
     return this.computersService.getComputerApps(id);
+  }
+
+
+  @Get(':computerId/applications')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN) // Added role protection
+  @ApiOperation({ summary: 'Get installed applications' })
+  async getInstalledApplications(@Param('computerId') computerId: string) {
+    return this.computersService.getInstalledApplications(computerId);
+  }
+
+  @Post(':computerId/applications/install')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN) // Added role protection
+  @ApiOperation({ summary: 'Install new application' })
+  async installApplication(
+    @Param('computerId') computerId: string,
+    @Body() installDto: InstallApplicationDto,
+  ) {
+    return this.computersService.installApplication(computerId, installDto);
+  }
+
+  @Put(':computerId/applications/:appId')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN) // Added role protection
+  @ApiOperation({ summary: 'Update installed application' })
+  async updateApplication(
+    @Param('computerId') computerId: string,
+    @Param('appId') appId: string,
+    @Body() updateDto: UpdateApplicationDto,
+  ) {
+    return this.computersService.updateApplication(computerId, appId, updateDto);
+  }
+
+  @Delete(':computerId/applications/:appId')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN) // Added role protection
+  @ApiOperation({ summary: 'Remove installed application' })
+  async removeApplication(
+    @Param('computerId') computerId: string,
+    @Param('appId') appId: string,
+  ) {
+    return this.computersService.removeApplication(computerId, appId);
   }
 }
