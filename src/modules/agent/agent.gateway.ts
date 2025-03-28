@@ -13,6 +13,41 @@ import { AgentService } from './agent.service';
 })
 @UseGuards(JwtAuthForComputersGuard)
 export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
+    private sshConnections = new Map<string, any>();
+
+    constructor(
+        private readonly agentService: AgentService,
+    ) {}
+
+    @WebSocketServer()
+    server: Server;
+
+    async handleConnection(client: Socket) {
+        console.log(`Client connected: ${client.id}`);
+        client.emit('message', { success: true, result: 'Connected to terminal server' });
+    }
+
+    handleDisconnect(client: Socket) {
+        console.log(`Client disconnected: ${client.id}`);
+        const ssh = this.sshConnections.get(client.id);
+        if (ssh) {
+            ssh.end();
+            this.sshConnections.delete(client.id);
+        }
+    }
+
+    @SubscribeMessage('connect_ssh')
+    async handleSSHConnection(client: Socket, payload: any) {
+        try {
+            const ssh = await this.agentService.connectSSH(payload);
+            this.sshConnections.set(client.id, ssh);
+            return { success: true };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+@UseGuards(JwtAuthForComputersGuard)
+export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
 
     constructor(private readonly agentService: AgentService) {}

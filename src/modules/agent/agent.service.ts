@@ -7,6 +7,8 @@ import { ComputerInterface } from './entity/computer.interface';
 import { AgentAuthService } from './service/agent.auth.service';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import SSH2Promise from 'ssh2-promise';
+
 
 const execAsync = promisify(exec);
 
@@ -56,7 +58,7 @@ export class AgentService extends BaseService<ComputerInterface> {
             os_version: result.os_version,
             machine_id: result.machine_id,
         };
-        
+
         return {
             token: await this.authService.generateToken(agentTokenPayload),
             statusCode: statusCode,
@@ -98,61 +100,91 @@ export class AgentService extends BaseService<ComputerInterface> {
             throw new Error(`Command execution failed: ${error.message}`);
         }
     }
-}
-async executeCommand(command: string): Promise<string> {
-    try {
-        const { stdout, stderr } = await execAsync(command);
-        if (stderr) {
-            throw new Error(stderr);
+
+    async connectSSH(connectionData: any) {
+        const ssh = new SSH2Promise({
+            host: connectionData.host,
+            port: connectionData.port || 22,
+            username: connectionData.username,
+            password: connectionData.password
+        });
+
+        await ssh.connect();
+        return ssh;
+    }
+
+    async executeSSHCommand(ssh: any, command: string): Promise<string> {
+        try {
+            return await ssh.exec(command);
+        } catch (error) {
+            throw new Error(`SSH command execution failed: ${error.message}`);
         }
-        return stdout;
-    } catch (error) {
-        throw new Error(`Command execution failed: ${error.message}`);
     }
-}
+    async executeRemoteCommand(agentId: string, command: string): Promise<string> {
+        // Agent orqali uzoq serverdagi buyruqni bajarish
+        const agent = await this.findOne(agentId);
+        if (!agent) {
+            throw new Error('Agent not found');
+        }
 
-async executeRemoteCommand(agentId: string, command: string): Promise<string> {
-    // Agent orqali uzoq serverdagi buyruqni bajarish
-    const agent = await this.findOne(agentId);
-    if (!agent) {
-        throw new Error('Agent not found');
+        // SSH orqali buyruqni bajarish
+        const ssh = await this.connectSSH({
+            host: agent.hostname,
+            port: 22,
+            username: agent.username,
+            password: process.env.SSH_PASSWORD // Assuming password authentication
+        });
+
+        try {
+            return await this.executeSSHCommand(ssh, command);
+        } finally {
+            ssh.end();
+        }
     }
-    
-    // SSH orqali buyruqni bajarish
-    return await this.executeSSHCommand(agent, command);
-}
 
-async installProduct(agentId: string, productId: string, version: string): Promise<string> {
-    const agent = await this.findOne(agentId);
-    if (!agent) {
-        throw new Error('Agent not found');
+    async installProduct(agentId: string, productId: string, version: string): Promise<string> {
+        const agent = await this.findOne(agentId);
+        if (!agent) {
+            throw new Error('Agent not found');
+        }
+
+        // Productni o'rnatish scriptini yaratish
+        const installScript = await this.generateInstallScript(productId, version);
+
+        // Scriptni agent serveriga yuborish va bajarish
+        const ssh = await this.connectSSH({
+            host: agent.hostname,
+            port: 22,
+            username: agent.username,
+            password: process.env.SSH_PASSWORD // Assuming password authentication
+        });
+        try {
+            return await this.executeSSHCommand(ssh, installScript);
+        } finally {
+            ssh.end();
+        }
+
     }
 
-    // Productni o'rnatish scriptini yaratish
-    const installScript = await this.generateInstallScript(productId, version);
-    
-    // Scriptni agent serveriga yuborish va bajarish
-    return await this.executeSSHCommand(agent, installScript);
-}
+    private async executeSSHCommand(agent: ComputerInterface, command: string): Promise<string> {
+        const sshConfig = {
+            host: agent.hostname,
+            port: 22,
+            username: agent.username,
+            privateKey: process.env.SSH_PRIVATE_KEY
+        };
 
-private async executeSSHCommand(agent: ComputerInterface, command: string): Promise<string> {
-    const sshConfig = {
-        host: agent.hostname,
-        port: 22,
-        username: agent.username,
-        privateKey: process.env.SSH_PRIVATE_KEY
-    };
+        // SSH connection va command bajarish
+        // Bu yerda SSH2 kutubxonasidan foydalanish kerak
+        return 'SSH command executed successfully';
+    }
 
-    // SSH connection va command bajarish
-    // Bu yerda SSH2 kutubxonasidan foydalanish kerak
-    return 'SSH command executed successfully';
-}
-
-private async generateInstallScript(productId: string, version: string): Promise<string> {
-    // Product o'rnatish scripti generatsiyasi
-    return `
-        wget https://your-product-url/${productId}/${version}/install.sh
-        chmod +x install.sh
-        ./install.sh
-    `;
+    private async generateInstallScript(productId: string, version: string): Promise<string> {
+        // Product o'rnatish scripti generatsiyasi
+        return `
+            wget https://your-product-url/${productId}/${version}/install.sh
+            chmod +x install.sh
+            ./install.sh
+        `;
+    }
 }
