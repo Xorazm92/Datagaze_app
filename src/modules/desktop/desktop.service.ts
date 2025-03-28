@@ -8,66 +8,50 @@ import {
   WebApplicationDetailsEntity,
 } from './dto/desktop.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { join } from 'path';
+import { readFileSync } from 'fs';
 
 @Injectable()
 export class DesktopService {
-  private webApplications: WebApplicationEntity[] = [
-    {
-      id: '832f6fa7-dad4-430a-9206-5fb118d36f26',
-      application_name: 'DLP',
-      version: '4.7.2',
-      pathToIcon: '/dlp.png',
-      is_installed: false,
-    },
-    {
-      id: '18903dfc-0903-4423-a620-8fa8e9e8663e',
-      application_name: 'WAF',
-      version: '2.1.0',
-      pathToIcon: '/waf.png',
-      is_installed: true,
-    },
-  ];
+  private webApplications: WebApplicationEntity[];
+  private webApplicationDetails: { [key: string]: WebApplicationDetailsEntity };
 
-  private webApplicationDetails: {
-    [key: string]: WebApplicationDetailsEntity;
-  } = {
-    '832f6fa7-dad4-430a-9206-5fb118d36f26': {
-      id: '832f6fa7-dad4-430a-9206-5fb118d36f26',
-      application_name: 'DLP',
-      version: '4.7.2',
-      pathToIcon: '/dlp.png',
-      is_installed: false,
-      publisher: 'Datagaze LLC',
-      release_date: '05.10.2023',
-      cpu: '2-cores',
-      ram: '2 GB',
-      storage: '64 GB SSD',
-      network_bandwidth: '100 Mbps Ethernet Port',
-    },
-    '18903dfc-0903-4423-a620-8fa8e9e8663e': {
-      id: '18903dfc-0903-4423-a620-8fa8e9e8663e',
-      application_name: 'WAF',
-      version: '2.1.0',
-      pathToIcon: '/waf.png',
-      is_installed: true,
-      publisher: 'Datagaze LLC',
-      release_date: '02.12.2022',
-      cpu: '2-cores',
-      ram: '4 GB',
-      storage: '128 GB SSD',
-      network_bandwidth: '1 Gbps Ethernet Port',
-    },
-  };
-
-  findAllWebApplications(): WebApplicationEntity[] {
+  constructor() {
     try {
-      return this.webApplications;
+      const webAppsPath = join(process.cwd(), 'public/assets/web-applications.json');
+      const webAppDetailsPath = join(process.cwd(), 'public/assets/web-application-details.json');
+
+      this.webApplications = JSON.parse(readFileSync(webAppsPath, 'utf-8'));
+      this.webApplicationDetails = JSON.parse(readFileSync(webAppDetailsPath, 'utf-8'));
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to fetch web applications',
-      );
+      throw new InternalServerErrorException('Failed to load web applications data');
     }
   }
+
+  // findAllWebApplications(): WebApplicationEntity[] {
+  //   try {
+  //     return this.webApplications;
+  //   } catch (error) {
+  //     throw new InternalServerErrorException(
+  //       'Failed to fetch web applications',
+  //     );
+  //   }
+  // }
+
+  findAllWebApplications(): WebApplicationEntity[] {
+    return this.webApplications.map(app => ({
+      ...app,
+      title: app.application_name,
+      img: app.pathToIcon,
+      License_count: 1, // bu yerda to'g'ri qiymatni olish kerak
+      Agent_version: app.version,
+      adress: "127.0.0.1", // bu yerda to'g'ri IP olish kerak
+      File_size: 1, // bu yerda to'g'ri fayl hajmi olish kerak
+      First_upload_date: "2024-01-01",
+      Last_upload_date: "2024-01-01"
+    }));
+  }
+
 
   findWebApplicationById(id: string): WebApplicationDetailsEntity {
     try {

@@ -24,15 +24,50 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto) {
-    // Mock registration - in real app would save to database
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-    const role = registerDto.email === 'admin@example.com' ? 'admin' : 'user';
-    return {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+    const role = 'admin';
+  
+    const newUser = {
+      fullname: registerDto.fullname,
       email: registerDto.email,
       username: registerDto.username,
-      role
+      password: hashedPassword,
+      role: role,
     };
+  
+    try {
+      // Email yoki username allaqachon mavjudligini tekshirish
+      const existingUser = await this.knex('admin') 
+        .where({ email: registerDto.email })
+        .orWhere({ username: registerDto.username })
+        .first();
+  
+      if (existingUser) {
+        throw new ConflictException('Email or username already exists');
+      }
+  
+      // Foydalanuvchini ma'lumotlar bazasiga qo'shish
+      const [userId] = await this.knex('admin') // "users" o'rniga "admin" jadvali
+        .insert(newUser)
+        .returning('id');
+  
+      this.logger.log(`New admin user registered: ${newUser.username}`);
+  
+      return {
+        message: 'Admin user registered successfully',
+        user: {
+          id: userId,
+          fullname: newUser.fullname,
+          email: newUser.email,
+          username: newUser.username,
+
+          role: newUser.role,
+        },
+      };
+    } catch (error) {
+      this.logger.error('Error registering user', error);
+      throw new ConflictException('Failed to register user');
+    }
   }
 
   async login(loginDto: LoginDto) {
