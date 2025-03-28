@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards, Post, Body, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, Post, Body, Put, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -193,7 +193,12 @@ export class ComputersController {
   @Roles(Role.SUPER_ADMIN, Role.ADMIN) // Added role protection
   @ApiOperation({ summary: 'Get installed applications' })
   async getInstalledApplications(@Param('computerId') computerId: string) {
-    return this.computersService.getInstalledApplications(computerId);
+    try {
+      const applications = await this.computersService.getInstalledApplications(computerId);
+      return { success: true, data: applications };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Post(':computerId/applications/install')
@@ -203,7 +208,12 @@ export class ComputersController {
     @Param('computerId') computerId: string,
     @Body() installDto: InstallApplicationDto,
   ) {
-    return this.computersService.installApplication(computerId, installDto);
+    try {
+      await this.computersService.installApplication(computerId, installDto);
+      return { success: true, message: 'Installation started' };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Put(':computerId/applications/:appId')

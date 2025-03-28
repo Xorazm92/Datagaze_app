@@ -18,6 +18,62 @@ import {
 
 @Injectable()
 export class ComputersService {
+  async getInstalledApplications(computerId: string) {
+    const computer = await this.findOne(computerId);
+    if (!computer) {
+      throw new Error('Computer not found');
+    }
+    
+    return await this.prisma.installedApplication.findMany({
+      where: { computerId },
+      include: { application: true }
+    });
+  }
+
+  async installApplication(computerId: string, applicationId: string) {
+    const computer = await this.findOne(computerId);
+    if (!computer) {
+      throw new Error('Computer not found');
+    }
+
+    const application = await this.prisma.application.findUnique({
+      where: { id: applicationId }
+    });
+    if (!application) {
+      throw new Error('Application not found');
+    }
+
+    // Create installation record
+    await this.prisma.installedApplication.create({
+      data: {
+        computerId,
+        applicationId,
+        status: 'INSTALLING',
+        version: application.version
+      }
+    });
+
+    // Send installation command to agent
+    await this.agentService.sendInstallCommand(computerId, applicationId);
+  }
+
+  async updateApplication(computerId: string, applicationId: string) {
+    const installation = await this.prisma.installedApplication.findFirst({
+      where: { computerId, applicationId }
+    });
+    if (!installation) {
+      throw new Error('Application not installed');
+    }
+
+    // Update installation status
+    await this.prisma.installedApplication.update({
+      where: { id: installation.id },
+      data: { status: 'UPDATING' }
+    });
+
+    // Send update command to agent
+    await this.agentService.sendUpdateCommand(computerId, applicationId);
+  }
   constructor(@InjectConnection() private readonly knex: Knex) {}
 
   async getAllComputers(
