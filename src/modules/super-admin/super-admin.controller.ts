@@ -1,4 +1,7 @@
 @Controller('api/super-admin')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.SUPER_ADMIN)
+@ApiTags('Super Admin')
 export class SuperAdminController {
   @Put('admins/:adminId/status')
   @ApiOperation({ summary: 'Update admin status' })
