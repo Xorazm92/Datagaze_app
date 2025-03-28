@@ -4,6 +4,54 @@ import * as SSH2Promise from 'ssh2-promise';
 
 @Injectable()
 export class TerminalService {
+  private sshConnections = new Map();
+
+  async connectToSSH(serverData: {
+    host: string;
+    port: number;
+    username: string;
+    password: string;
+  }): Promise<string> {
+    const connection = new Client();
+    
+    try {
+      await connection.connect({
+        host: serverData.host,
+        port: serverData.port,
+        username: serverData.username,
+        password: serverData.password
+      });
+
+      const sessionId = Math.random().toString(36).substring(7);
+      this.sshConnections.set(sessionId, connection);
+      
+      return sessionId;
+    } catch (error) {
+      throw new Error(`SSH Connection failed: ${error.message}`);
+    }
+  }
+
+  async executeCommand(sessionId: string, command: string): Promise<string> {
+    const connection = this.sshConnections.get(sessionId);
+    if (!connection) {
+      throw new Error('SSH session not found');
+    }
+
+    return new Promise((resolve, reject) => {
+      connection.exec(command, (err, stream) => {
+        if (err) reject(err);
+        
+        let output = '';
+        stream.on('data', (data) => {
+          output += data.toString();
+        });
+        
+        stream.on('end', () => {
+          resolve(output);
+        });
+      });
+    });
+  }
   private connections = new Map<string, SSH2Promise>();
 
   async connect(connectionData: any): Promise<SSH2Promise> {
