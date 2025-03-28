@@ -8,8 +8,6 @@ import {
   WebApplicationDetailsEntity,
 } from './dto/desktop.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { DesktopConnectionDto } from './dto/desktop-connection.dto';
-import { DesktopEntity } from './entities/desktop.entity';
 
 @Injectable()
 export class DesktopService {
@@ -139,44 +137,5 @@ export class DesktopService {
         'Failed to uninstall web application',
       );
     }
-  }
-}
-
-
-@Injectable()
-export class DesktopService2 {
-  private desktops: DesktopEntity[] = [];
-
-  async connect(connectionDto: DesktopConnectionDto): Promise<DesktopEntity> {
-    // Implementation for desktop connection
-    const desktop = new DesktopEntity();
-    desktop.id = Date.now().toString();
-    desktop.name = `Desktop-${desktop.id}`;
-    desktop.is_connected = true;
-    desktop.ip_address = connectionDto.host;
-    desktop.os = 'Windows 10'; // This should be detected
-    desktop.last_connected = new Date();
-
-    this.desktops.push(desktop);
-    return desktop;
-  }
-
-  async findAll(): Promise<DesktopEntity[]> {
-    return this.desktops;
-  }
-
-  async findOne(id: string): Promise<DesktopEntity> {
-    return this.desktops.find(d => d.id === id);
-  }
-
-  async disconnect(id: string): Promise<void> {
-    const desktop = this.desktops.find(d => d.id === id);
-    if (desktop) {
-      desktop.is_connected = false;
-    }
-  }
-
-  async remove(id: string): Promise<void> {
-    this.desktops = this.desktops.filter(d => d.id !== id);
   }
 }
