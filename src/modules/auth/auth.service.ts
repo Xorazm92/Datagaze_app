@@ -97,6 +97,54 @@ export class AuthService {
     throw new UnauthorizedException('Invalid credentials');
   }
 
+  async getAllAdmins() {
+    try {
+      // Ma'lumotlar bazasidan barcha adminlarni olish
+      const admins = await this.knex('admin').select('id', 'fullname', 'email', 'role', 'created_at');
+      return admins;
+    } catch (error) {
+      this.logger.error('Error fetching admin users', error);
+      throw new Error('Failed to fetch admin users');
+    }
+  }
+  async updateAdmin(adminId: string, updateData: Partial<RegisterDto>) {
+    try {
+      // Foydalanuvchini yangilash
+      const updatedRows = await this.knex('admin')
+        .where({ id: adminId })
+        .update(updateData);
+  
+      if (updatedRows === 0) {
+        throw new NotFoundException(`Admin with ID ${adminId} not found`);
+      }
+  
+      this.logger.log(`Admin with ID ${adminId} updated successfully`);
+      return { message: 'Admin updated successfully' };
+    } catch (error) {
+      this.logger.error(`Error updating admin with ID ${adminId}`, error);
+      throw new Error('Failed to update admin');
+    }
+  }
+
+  async deleteAdmin(adminId: string) {
+    try {
+      // Foydalanuvchini o'chirish
+      const deletedRows = await this.knex('admin')
+        .where({ id: adminId })
+        .del();
+  
+      if (deletedRows === 0) {
+        throw new NotFoundException(`Admin with ID ${adminId} not found`);
+      }
+  
+      this.logger.log(`Admin with ID ${adminId} deleted successfully`);
+      return { message: 'Admin deleted successfully' };
+    } catch (error) {
+      this.logger.error(`Error deleting admin with ID ${adminId}`, error);
+      throw new Error('Failed to delete admin');
+    }
+  }
+  
   async updatePassword(userId: string, updatePasswordDto: UpdatePasswordDto) {
     // Mock password update - in real app would update in database
     return { message: 'Password updated successfully' };
