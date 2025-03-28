@@ -3,6 +3,8 @@
 @Roles(Role.SUPER_ADMIN)
 @ApiTags('Super Admin')
 export class SuperAdminController {
+  constructor(private readonly superAdminService: SuperAdminService) {}
+
   @Put('admins/:adminId/status')
   @ApiOperation({ summary: 'Update admin status' })
   async updateAdminStatus(
