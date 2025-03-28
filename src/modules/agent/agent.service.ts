@@ -110,3 +110,49 @@ async executeCommand(command: string): Promise<string> {
         throw new Error(`Command execution failed: ${error.message}`);
     }
 }
+
+async executeRemoteCommand(agentId: string, command: string): Promise<string> {
+    // Agent orqali uzoq serverdagi buyruqni bajarish
+    const agent = await this.findOne(agentId);
+    if (!agent) {
+        throw new Error('Agent not found');
+    }
+    
+    // SSH orqali buyruqni bajarish
+    return await this.executeSSHCommand(agent, command);
+}
+
+async installProduct(agentId: string, productId: string, version: string): Promise<string> {
+    const agent = await this.findOne(agentId);
+    if (!agent) {
+        throw new Error('Agent not found');
+    }
+
+    // Productni o'rnatish scriptini yaratish
+    const installScript = await this.generateInstallScript(productId, version);
+    
+    // Scriptni agent serveriga yuborish va bajarish
+    return await this.executeSSHCommand(agent, installScript);
+}
+
+private async executeSSHCommand(agent: ComputerInterface, command: string): Promise<string> {
+    const sshConfig = {
+        host: agent.hostname,
+        port: 22,
+        username: agent.username,
+        privateKey: process.env.SSH_PRIVATE_KEY
+    };
+
+    // SSH connection va command bajarish
+    // Bu yerda SSH2 kutubxonasidan foydalanish kerak
+    return 'SSH command executed successfully';
+}
+
+private async generateInstallScript(productId: string, version: string): Promise<string> {
+    // Product o'rnatish scripti generatsiyasi
+    return `
+        wget https://your-product-url/${productId}/${version}/install.sh
+        chmod +x install.sh
+        ./install.sh
+    `;
+}

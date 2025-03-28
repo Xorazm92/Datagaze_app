@@ -65,7 +65,8 @@
     "ssh2": "^1.16.0",
     "typeorm": "^0.3.20",
     "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "xterm": "^5.3.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

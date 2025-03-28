@@ -27,12 +27,37 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     @SubscribeMessage('command')
-    async handleCommand(client: Socket, payload: { command: string }) {
+    async handleCommand(client: Socket, payload: { command: string; agentId?: string }) {
         try {
-            const result = await this.agentService.executeCommand(payload.command);
-            client.emit('command_response', { success: true, result });
+            if (payload.agentId) {
+                // Agent orqali buyruqni bajarish
+                const result = await this.agentService.executeRemoteCommand(payload.agentId, payload.command);
+                client.emit('command_response', { success: true, result, agentId: payload.agentId });
+            } else {
+                // Lokal buyruqni bajarish
+                const result = await this.agentService.executeCommand(payload.command);
+                client.emit('command_response', { success: true, result });
+            }
         } catch (error) {
             client.emit('command_response', { success: false, result: error.message });
+        }
+    }
+
+    @SubscribeMessage('install_product')
+    async handleProductInstall(client: Socket, payload: { 
+        agentId: string, 
+        productId: string,
+        version: string 
+    }) {
+        try {
+            const result = await this.agentService.installProduct(
+                payload.agentId,
+                payload.productId,
+                payload.version
+            );
+            client.emit('install_response', { success: true, result });
+        } catch (error) {
+            client.emit('install_response', { success: false, error: error.message });
         }
     }
 }
