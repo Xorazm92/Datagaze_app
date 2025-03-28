@@ -13,6 +13,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,7 @@ export class AuthService {
   constructor(
     @InjectConnection() private readonly knex: Knex,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService, // Inject ConfigService
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -80,7 +82,11 @@ export class AuthService {
         role: 'superadmin'
       };
       
-      const token = this.jwtService.sign(payload);
+      const secretKey = this.configService.get<string>('JWT_SECRET'); // Retrieve secret key
+      this.logger.debug(`JWT Secret Key used for signing: ${secretKey}`); // Log the secret key
+      
+      const token = this.jwtService.sign(payload, { secret: secretKey }); // Explicitly pass the secret
+      
       this.logger.log(`Login successful for user: ${loginDto.username}`);
       
       return {

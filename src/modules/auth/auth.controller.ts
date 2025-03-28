@@ -29,6 +29,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator';
 import { Role } from './enums/role.enum';
+import { AuthGuard } from 'src/common/guards/jwt-auth.guard';
 
 @ApiTags('Auth')
 @Controller('/1/auth')
@@ -154,7 +155,7 @@ export class AuthController {
     return this.authService.getAllAdmins();
   }
   @Put('admins/:id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update admin user' })
   @ApiParam({ name: 'id', description: 'Admin ID' })
@@ -206,7 +207,7 @@ export class AuthController {
   }
 
   @Delete('admins/:id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete admin user' })
   @ApiParam({ name: 'id', description: 'Admin ID' })
