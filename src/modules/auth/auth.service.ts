@@ -28,7 +28,7 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
     const role = 'admin';
-  
+
     const newUser = {
       fullname: registerDto.fullname,
       email: registerDto.email,
@@ -36,25 +36,25 @@ export class AuthService {
       password: hashedPassword,
       role: role,
     };
-  
+
     try {
       // Email yoki username allaqachon mavjudligini tekshirish
-      const existingUser = await this.knex('admin') 
+      const existingUser = await this.knex('admin')
         .where({ email: registerDto.email })
         .orWhere({ username: registerDto.username })
         .first();
-  
+
       if (existingUser) {
         throw new ConflictException('Email or username already exists');
       }
-  
+
       // Foydalanuvchini ma'lumotlar bazasiga qo'shish
       const [userId] = await this.knex('admin') // "users" o'rniga "admin" jadvali
         .insert(newUser)
         .returning('id');
-  
+
       this.logger.log(`New admin user registered: ${newUser.username}`);
-  
+
       return {
         message: 'Admin user registered successfully',
         user: {
@@ -74,29 +74,32 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     this.logger.log(`Login attempt for user: ${loginDto.username}`);
-    
-    if (loginDto.username === 'superadmin' && loginDto.password === 'superadmin') {
-      const payload = { 
+
+    if (
+      loginDto.username === 'superadmin' &&
+      loginDto.password === 'superadmin'
+    ) {
+      const payload = {
         sub: '123e4567-e89b-12d3-a456-426614174000',
         username: loginDto.username,
-        role: 'superadmin'
+        role: 'superadmin',
       };
-      
+
       const secretKey = this.configService.get<string>('JWT_SECRET'); // Retrieve secret key
       this.logger.debug(`JWT Secret Key used for signing: ${secretKey}`); // Log the secret key
-      
+
       const token = this.jwtService.sign(payload, { secret: secretKey }); // Explicitly pass the secret
-      
+
       this.logger.log(`Login successful for user: ${loginDto.username}`);
-      
+
       return {
         status: 'success',
         token: token,
         user: {
           id: payload.sub,
           username: payload.username,
-          role: payload.role
-        }
+          role: payload.role,
+        },
       };
     }
     this.logger.warn(`Login failed for user: ${loginDto.username}`);
@@ -106,7 +109,13 @@ export class AuthService {
   async getAllAdmins() {
     try {
       // Ma'lumotlar bazasidan barcha adminlarni olish
-      const admins = await this.knex('admin').select('id', 'fullname', 'email', 'role', 'created_at');
+      const admins = await this.knex('admin').select(
+        'id',
+        'fullname',
+        'email',
+        'role',
+        'created_at',
+      );
       return admins;
     } catch (error) {
       this.logger.error('Error fetching admin users', error);
@@ -119,11 +128,11 @@ export class AuthService {
       const updatedRows = await this.knex('admin')
         .where({ id: adminId })
         .update(updateData);
-  
+
       if (updatedRows === 0) {
         throw new NotFoundException(`Admin with ID ${adminId} not found`);
       }
-  
+
       this.logger.log(`Admin with ID ${adminId} updated successfully`);
       return { message: 'Admin updated successfully' };
     } catch (error) {
@@ -135,14 +144,12 @@ export class AuthService {
   async deleteAdmin(adminId: string) {
     try {
       // Foydalanuvchini o'chirish
-      const deletedRows = await this.knex('admin')
-        .where({ id: adminId })
-        .del();
-  
+      const deletedRows = await this.knex('admin').where({ id: adminId }).del();
+
       if (deletedRows === 0) {
         throw new NotFoundException(`Admin with ID ${adminId} not found`);
       }
-  
+
       this.logger.log(`Admin with ID ${adminId} deleted successfully`);
       return { message: 'Admin deleted successfully' };
     } catch (error) {
@@ -150,7 +157,7 @@ export class AuthService {
       throw new Error('Failed to delete admin');
     }
   }
-  
+
   async updatePassword(userId: string, updatePasswordDto: UpdatePasswordDto) {
     // Mock password update - in real app would update in database
     return { message: 'Password updated successfully' };
@@ -161,7 +168,7 @@ export class AuthService {
     return {
       id: userId,
       email: updateProfileDto.email,
-      username: updateProfileDto.username
+      username: updateProfileDto.username,
     };
   }
 }

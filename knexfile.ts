@@ -1,45 +1,45 @@
-import type { Knex } from "knex";
+import type { Knex } from 'knex';
 
 const config: { [key: string]: Knex.Config } = {
   development: {
-    client: "postgresql",
+    client: 'postgresql',
     connection: {
-      database: "datagaze",
-      user: "postgres",
-      password: "postgres"
+      database: 'datagaze',
+      user: 'postgres',
+      password: 'postgres',
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      tableName: "knex_migrations",
-      directory: "./src/core/database/migrations"
+      tableName: 'knex_migrations',
+      directory: './src/core/database/migrations',
     },
     seeds: {
-      directory: "./src/core/database/seeds"
-    }
+      directory: './src/core/database/seeds',
+    },
   },
 
   production: {
-    client: "postgresql",
+    client: 'postgresql',
     connection: {
-      database: "datagaze",
-      user: "postgres",
-      password: "postgres"
+      database: 'datagaze',
+      user: 'postgres',
+      password: 'postgres',
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      tableName: "knex_migrations",
-      directory: "./src/core/database/migrations"
+      tableName: 'knex_migrations',
+      directory: './src/core/database/migrations',
     },
     seeds: {
-      directory: "./src/core/database/seeds"
-    }
-  }
+      directory: './src/core/database/seeds',
+    },
+  },
 };
 
 export default config;

@@ -20,52 +20,50 @@
     "knex": "knex --knexfile knexfile.ts -x ts"
   },
   "dependencies": {
-    "@nestjs/axios": "^4.0.0",
-    "@nestjs/cache-manager": "^2.3.0",
-    "@nestjs/common": "^10.4.15",
-    "@nestjs/config": "^3.3.0",
-    "@nestjs/core": "^10.4.15",
-    "@nestjs/jwt": "^10.2.0",
-    "@nestjs/mapped-types": "*",
-    "@nestjs/passport": "^11.0.5",
-    "@nestjs/platform-express": "^10.4.15",
-    "@nestjs/platform-socket.io": "^10.4.15",
-    "@nestjs/serve-static": "^4.0.0",
-    "@nestjs/swagger": "^7.4.2",
-    "@nestjs/typeorm": "^10.0.2",
-    "@nestjs/websockets": "^10.4.15",
-    "axios": "^1.7.9",
-    "bcrypt": "^5.1.1",
-    "cache-manager": "^5.7.6",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1",
-    "cls-hooked": "^4.2.2",
-    "cookie-parser": "^1.4.7",
-    "dotenv": "^16.4.7",
-    "error-stack-parser": "^2.1.4",
-    "express": "^4.21.2",
-    "express-rate-limit": "^7.5.0",
-    "fp-ts": "^2.16.9",
-    "helmet": "^8.0.0",
-    "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.0",
-    "multer": "^1.4.5-lts.1",
-    "nest-knexjs": "^0.0.26",
-    "nest-winston": "^1.10.2",
-    "nestjs-knex": "^2.0.0",
-    "objection": "^3.1.5",
-    "otp-generator": "^4.0.1",
-    "passport": "^0.7.0",
-    "passport-jwt": "^4.0.1",
-    "pg": "^8.14.1",
-    "pg-hstore": "^2.3.4",
-    "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.1",
-    "socket.io": "^4.8.1",
-    "ssh2": "^1.16.0",
-    "typeorm": "^0.3.20",
-    "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    // NestJS asosiy paketlari
+    "@nestjs/common": "^10.4.15",      // NestJS frameworkining asosiy komponenti
+    "@nestjs/core": "^10.4.15",        // NestJS core funksionalligi
+    "@nestjs/config": "^3.3.0",        // Konfiguratsiya uchun (.env fayllarni o'qish)
+    "@nestjs/platform-express": "^10.4.15", // Express.js integratsiyasi
+
+    // Ma'lumotlar bazasi bilan ishlash
+    "nest-knexjs": "^0.0.26",          // Knex.js ORM integratsiyasi
+    "pg": "^8.14.1",                   // PostgreSQL drayveri
+
+    // Xavfsizlik
+    "@nestjs/jwt": "^10.2.0",          // JWT bilan ishlash
+    "@nestjs/passport": "^11.0.5",      // Autentifikatsiya
+    "passport": "^0.7.0",               // Passport.js asosiy kutubxonasi
+    "passport-jwt": "^4.0.1",           // JWT strategiyasi
+    "bcrypt": "^5.1.1",                // Parollarni hashlash
+
+    // Validatsiya va transformatsiya
+    "class-validator": "^0.14.1",       // DTO validatsiyasi
+    "class-transformer": "^0.5.1",      // Obyektlarni transformatsiya qilish
+
+    // Real-time kommunikatsiya
+    "@nestjs/websockets": "^10.4.15",   // WebSocket qo'llab-quvvatlash
+    "@nestjs/platform-socket.io": "^10.4.15", // Socket.io integratsiyasi
+    "socket.io": "^4.8.1",              // Socket.io kutubxonasi
+
+    // API dokumentatsiyasi
+    "@nestjs/swagger": "^7.4.2",        // Swagger/OpenAPI integratsiyasi
+
+    // Xavfsizlik va monitoring
+    "helmet": "^8.0.0",                 // HTTP headerlarni xavfsizlashtirish
+    "express-rate-limit": "^7.5.0",     // So'rovlar sonini cheklash
+
+    // Logging va monitoring
+    "winston": "^3.17.0",               // Logging tizimi
+    "winston-daily-rotate-file": "^5.0.0", // Log fayllarni rotatsiya qilish
+
+    // Fayl yuklash
+    "multer": "^1.4.5-lts.1",           // Fayllarni yuklash uchun
+
+    // Utility paketlar
+    "dotenv": "^16.4.7",                // Environment o'zgaruvchilarni o'qish
+    "rxjs": "^7.8.1",                   // Reaktiv dasturlash
+    "reflect-metadata": "^0.2.0"        // Metadata reflection API
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
