@@ -1,0 +1,44 @@
+[7:15:22 PM] File change detected. Starting incremental compilation...
+
+[7:15:24 PM] Found 0 errors. Watching for file changes.
+
+[Nest] 2053  - 03/25/2025, 7:15:31 PM     LOG [NestFactory] Starting Nest application...
+[Nest] 2053  - 03/25/2025, 7:15:31 PM     LOG [InstanceLoader] AppModule dependencies initialized +199ms
+[Nest] 2053  - 03/25/2025, 7:15:31 PM     LOG [InstanceLoader] KnexModule dependencies initialized +0ms
+[Nest] 2053  - 03/25/2025, 7:15:31 PM     LOG [InstanceLoader] KnexModule dependencies initialized +0ms
+[Nest] 2053  - 03/25/2025, 7:15:31 PM     LOG [InstanceLoader] PassportModule dependencies initialized +0ms
+[Nest] 2053  - 03/25/2025, 7:15:31 PM     LOG [InstanceLoader] KnexModule dependencies initialized +0ms
+[Nest] 2053  - 03/25/2025, 7:15:31 PM     LOG [InstanceLoader] KnexCoreModule dependencies initialized +1ms
+[Nest] 2053  - 03/25/2025, 7:15:31 PM     LOG [InstanceLoader] KnexCoreModule dependencies initialized +0ms
+[Nest] 2053  - 03/25/2025, 7:15:31 PM     LOG [InstanceLoader] JwtModule dependencies initialized +0ms
+[Nest] 2053  - 03/25/2025, 7:15:31 PM     LOG [InstanceLoader] KnexCoreModule dependencies initialized +0ms
+[Nest] 2053  - 03/25/2025, 7:15:31 PM   ERROR [ExceptionHandler] Nest can't resolve dependencies of the DlpService (?). Please make sure that the argument "KNEX_CONNECTION" at index [0] is available in the DlpModule context.
+
+Potential solutions:
+- Is DlpModule a valid NestJS module?
+- If "KNEX_CONNECTION" is a provider, is it part of the current DlpModule?
+- If "KNEX_CONNECTION" is exported from a separate @Module, is that module imported within DlpModule?
+  @Module({
+    imports: [ /* the Module containing "KNEX_CONNECTION" */ ]
+  })
+
+Error: Nest can't resolve dependencies of the DlpService (?). Please make sure that the argument "KNEX_CONNECTION" at index [0] is available in the DlpModule context.
+
+Potential solutions:
+- Is DlpModule a valid NestJS module?
+- If "KNEX_CONNECTION" is a provider, is it part of the current DlpModule?
+- If "KNEX_CONNECTION" is exported from a separate @Module, is that module imported within DlpModule?
+  @Module({
+    imports: [ /* the Module containing "KNEX_CONNECTION" */ ]
+  })
+
+    at Injector.lookupComponentInParentModules (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:262:19)
+    at async Injector.resolveComponentInstance (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:215:33)
+    at async resolveParam (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:129:38)
+    at async Promise.all (index 0)
+    at async Injector.resolveConstructorParams (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:144:27)
+    at async Injector.loadInstance (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:70:13)
+    at async Injector.loadProvider (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:98:9)
+    at async /home/runner/workspace/node_modules/@nestjs/core/injector/instance-loader.js:56:13
+    at async Promise.all (index 3)
+    at async InstanceLoader.createInstancesOfProviders (/home/runner/workspace/node_modules/@nestjs/core/injector/instance-loader.js:55:9)

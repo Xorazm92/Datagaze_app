@@ -1,0 +1,243 @@
+{
+  "info": {
+    "_postman_id": "datagaze-full-collection",
+    "name": "Datagaze Full API Collection",
+    "description": "To'liq Datagaze API kolleksiyasi, barcha modullar uchun",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Autentifikatsiya va avtorizatsiya uchun API endpointlar",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "1", "auth", "login"]
+            },
+            "description": "Tizimga kirish"
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"fullname\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"username\": \"johndoe\",\n    \"password\": \"password123\",\n    \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/1/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "1", "auth", "register"]
+            },
+            "description": "Yangi foydalanuvchi yaratish"
+          }
+        },
+        {
+          "name": "Update Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"oldPassword\": \"oldpass123\",\n    \"newPassword\": \"newpass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/1/auth/password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "1", "auth", "password"]
+            },
+            "description": "Parolni yangilash"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Agent",
+      "description": "Agent bilan bog'liq API endpointlar",
+      "item": [
+        {
+          "name": "Create Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"computerName\": \"PC-001\",\n    \"macAddress\": \"00:11:22:33:44:55\",\n    \"osType\": \"Windows\",\n    \"osVersion\": \"10\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/agent/create",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agent", "create"]
+            },
+            "description": "Yangi agent yaratish"
+          }
+        },
+        {
+          "name": "Update Applications",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{agent_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n    {\n        \"name\": \"Chrome\",\n        \"version\": \"100.0.4896.75\",\n        \"publisher\": \"Google LLC\",\n        \"installDate\": \"2024-01-01\"\n    }\n]"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/agent/applications",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agent", "applications"]
+            },
+            "description": "O'rnatilgan dasturlar ro'yxatini yangilash"
+          }
+        },
+        {
+          "name": "Get Applications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{agent_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agent/applications",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agent", "applications"]
+            },
+            "description": "O'rnatilgan dasturlar ro'yxatini olish"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Computers",
+      "description": "Kompyuterlar bilan ishlash uchun API endpointlar",
+      "item": [
+        {
+          "name": "Get All Computers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/1/device/computers?page=1&limit=10&status=active",
+              "host": ["{{base_url}}"],
+              "path": ["api", "1", "device", "computers"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "status",
+                  "value": "active"
+                }
+              ]
+            },
+            "description": "Barcha kompyuterlar ro'yxatini olish"
+          }
+        },
+        {
+          "name": "Get Computer by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/1/device/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "1", "device", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123",
+                  "description": "Kompyuter ID"
+                }
+              ]
+            },
+            "description": "Kompyuter ma'lumotlarini ID bo'yicha olish"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "your_jwt_token_here",
+      "type": "string"
+    },
+    {
+      "key": "agent_token",
+      "value": "your_agent_token_here",
+      "type": "string"
+    }
+  ]
+}
