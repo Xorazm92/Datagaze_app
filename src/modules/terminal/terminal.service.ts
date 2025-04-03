@@ -1,7 +1,7 @@
 
 import { Injectable } from '@nestjs/common';
-import * as SSH2Promise from 'ssh2-promise';
-import { Client } from 'ssh2';
+import SSH2Promise from 'ssh2-promise';
+import { Client, ConnectConfig } from 'ssh2';
 
 export interface SSHConnectionData {
   host: string;
@@ -15,12 +15,15 @@ export class TerminalService {
   private connections = new Map<string, SSH2Promise>();
 
   async connect(connectionData: SSHConnectionData): Promise<string> {
-    const ssh = new SSH2Promise({
+    const config: ConnectConfig = {
+      debug: console.log,
       host: connectionData.host,
       port: connectionData.port || 22,
       username: connectionData.username,
       password: connectionData.password
-    });
+    };
+
+    const ssh = new SSH2Promise(config);
 
     try {
       await ssh.connect();
