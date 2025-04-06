@@ -75,22 +75,18 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     this.logger.log(`Login attempt for user: ${loginDto.username}`);
 
-    if (
-      loginDto.username === 'superadmin' &&
-      loginDto.password === 'superadmin'
-    ) {
+    // Superadmin login
+    if (loginDto.username === 'superadmin' && loginDto.password === 'superadmin') {
       const payload = {
         sub: '123e4567-e89b-12d3-a456-426614174000',
         username: loginDto.username,
         role: 'superadmin',
       };
 
-      const secretKey = this.configService.get<string>('JWT_SECRET'); // Retrieve secret key
-      this.logger.debug(`JWT Secret Key used for signing: ${secretKey}`); // Log the secret key
+      const secretKey = this.configService.get<string>('JWT_SECRET');
+      const token = this.jwtService.sign(payload, { secret: secretKey });
 
-      const token = this.jwtService.sign(payload, { secret: secretKey }); // Explicitly pass the secret
-
-      this.logger.log(`Login successful for user: ${loginDto.username}`);
+      this.logger.log(`Superadmin login successful`);
 
       return {
         status: 'success',
@@ -102,8 +98,44 @@ export class AuthService {
         },
       };
     }
-    this.logger.warn(`Login failed for user: ${loginDto.username}`);
-    throw new UnauthorizedException('Invalid credentials');
+
+    // Regular admin login
+    const user = await this.knex('admin')
+      .where({ username: loginDto.username })
+      .first();
+
+    if (!user) {
+      this.logger.warn(`User not found: ${loginDto.username}`);
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
+
+    if (!isPasswordValid) {
+      this.logger.warn(`Invalid password for user: ${loginDto.username}`);
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+    };
+
+    const secretKey = this.configService.get<string>('JWT_SECRET');
+    const token = this.jwtService.sign(payload, { secret: secretKey });
+
+    this.logger.log(`Login successful for user: ${loginDto.username}`);
+
+    return {
+      status: 'success',
+      token: token,
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+      },
+    };
   }
 
   async getAllAdmins() {

@@ -5,7 +5,8 @@ import { InstallationScriptDto } from './dto/installation-script.dto';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import {ApiOperation} from '@nestjs/swagger';
+import { ApiOperation } from '@nestjs/swagger';
+import { ProductService } from './product.service';
 
 
 @Controller('products')

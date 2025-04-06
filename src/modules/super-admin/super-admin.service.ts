@@ -1,22 +1,40 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Knex } from 'knex';
+import { InjectConnection } from 'nest-knexjs';
+
 @Injectable()
 export class SuperAdminService {
   constructor(
-    @InjectModel(Admin.name) private adminModel: Model<AdminDocument>,
+    @InjectConnection() private readonly knex: Knex,
   ) {}
 
-  async updateAdminStatus(adminId: string, status: string): Promise<Admin> {
-    const admin = await this.adminModel.findById(adminId);
+  async updateAdminStatus(adminId: string, status: string) {
+    const admin = await this.knex('admins')
+      .where('id', adminId)
+      .first();
+
     if (!admin) {
       throw new NotFoundException('Admin not found');
     }
 
-    admin.status = status;
-    return admin.save();
+    await this.knex('admins')
+      .where('id', adminId)
+      .update({
+        status: status,
+        updated_at: new Date()
+      });
+
+    return this.knex('admins')
+      .where('id', adminId)
+      .first();
   }
 
   async deleteAdmin(adminId: string): Promise<void> {
-    const result = await this.adminModel.deleteOne({ _id: adminId });
-    if (result.deletedCount === 0) {
+    const deleted = await this.knex('admins')
+      .where('id', adminId)
+      .delete();
+
+    if (!deleted) {
       throw new NotFoundException('Admin not found');
     }
   }

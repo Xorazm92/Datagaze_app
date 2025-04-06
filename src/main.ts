@@ -49,17 +49,37 @@ async function bootstrap() {
   // Swagger dokumentatsiyasini sozlash
   const config = new DocumentBuilder()
     .setTitle('Datagaze Platform Web')
-    .setDescription('The Datagaze Platform Web API description')
+    .setDescription(`
+      Datagaze Platform Web API - bu kompyuter va ilovalarni boshqarish uchun RESTful API.
+      
+      ## Asosiy funksiyalar
+      - Foydalanuvchilarni boshqarish (Admin/SuperAdmin)
+      - Kompyuterlarni boshqarish
+      - Ilovalarni o'rnatish va o'chirish
+      - Monitoring va hisobotlar
+      
+      ## Autentifikatsiya
+      API JWT (JSON Web Token) autentifikatsiyasidan foydalanadi.
+      1. /api/1/auth/login endpointi orqali login qiling
+      2. Qaytgan token ni 'Bearer' sxemasi bilan Authorization header da yuboring
+    `)
     .setVersion('1.0')
-    .addBearerAuth() // JWT autentifikatsiyani qo'shish
+    .addTag('auth', 'Autentifikatsiya va foydalanuvchilarni boshqarish')
+    .addTag('computers', 'Kompyuterlarni boshqarish')
+    .addTag('applications', 'Ilovalarni boshqarish')
+    .addTag('monitoring', 'Monitoring va hisobotlar')
+    .addBearerAuth()
     .build();
   
   // Swagger dokumentini yaratish va o'rnatish
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); // /api URL da Swagger UI ni o'rnatish
 
-  // Serverni ishga tushirish (3000-portda, barcha interfeyslarda)
-  await app.listen(3000, '0.0.0.0');
+  // Serverni ishga tushirish
+  const port = process.env.PORT || 3000;
+  await app.listen(port, '0.0.0.0');
+  console.log(`Application is running on: http://localhost:${port}`);
+  console.log(`Swagger documentation is available at: http://localhost:${port}/api`);
 }
 
 // Applicationni ishga tushirish

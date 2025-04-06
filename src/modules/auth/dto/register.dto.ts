@@ -12,12 +12,12 @@ import {
 import { Role } from '../enums/role.enum';
 
 export class RegisterDto {
-
   @ApiProperty({
-    example: 'Talantbek',
-    description: 'Username for registration',
+    example: 'John Doe',
+    description: 'Full name of the user',
+    minLength: 3,
+    maxLength: 100
   })
-
   @IsString()
   @IsNotEmpty()
   @MinLength(3)
@@ -25,40 +25,54 @@ export class RegisterDto {
   fullname: string;
 
   @ApiProperty({
-    example: 'sabrqil',
-    description: 'Username for registration',
+    example: 'johndoe',
+    description: 'Username for login',
+    minLength: 3,
+    maxLength: 50
   })
-
-
   @IsString()
   @IsNotEmpty()
+  @MinLength(3)
+  @MaxLength(50)
+  @Matches(/^[a-zA-Z0-9_-]*$/, {
+    message: 'Username can only contain letters, numbers, underscores and hyphens'
+  })
   username: string;
 
   @ApiProperty({
-    example: 'sabr@gmail.com',
-    description: 'Email address of the user',
+    example: 'john.doe@example.com',
+    description: 'Email address of the user'
   })
-
   @IsString()
   @IsNotEmpty()
+  @IsEmail({}, {
+    message: 'Please provide a valid email address'
+  })
   email: string;
 
   @ApiProperty({
-    example: 'Parol@123',
-    description: 'Password for registration',
+    example: 'StrongP@ss123',
+    description: 'Password for the account',
+    minLength: 8,
+    pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
   })
-
   @IsString()
   @IsNotEmpty()
+  @MinLength(8)
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, {
+    message: 'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character'
+  })
   password: string;
-}
 
-  // @ApiProperty({
-  //   example: 'admin',
-  //   description: 'Role of the user (default is user)',
-  // })
-  // @IsOptional()
-  // @IsEnum(Role, { message: 'Role must be one of superadmin, admin, or user' })
-  // role?: Role = Role.ADMIN; // Default role is 'user'
-  // fullname: any;
-// }
+  @ApiProperty({
+    example: 'admin',
+    description: 'Role of the user',
+    enum: Role,
+    default: Role.ADMIN
+  })
+  @IsOptional()
+  @IsEnum(Role, {
+    message: 'Role must be one of: ' + Object.values(Role).join(', ')
+  })
+  role?: Role = Role.ADMIN;
+}
