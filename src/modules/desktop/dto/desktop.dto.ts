@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class InstallWebApplicationDto {
   @ApiProperty({
     description: 'Host address',
-    example: '209.38.250.43',
+    example: '192.168.1.1',
   })
   host: string;
 
@@ -67,7 +67,7 @@ export class WebApplicationDetailsEntity extends WebApplicationEntity {
 
   @ApiProperty({
     description: 'Application release date',
-    example: '02.12.2022',
+    example: '2024-12-02',
   })
   release_date: string;
 

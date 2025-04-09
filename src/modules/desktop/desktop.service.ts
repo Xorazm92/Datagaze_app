@@ -43,10 +43,10 @@ export class DesktopService {
       ...app,
       title: app.application_name,
       img: app.pathToIcon,
-      License_count: 1, // bu yerda to'g'ri qiymatni olish kerak
+      License_count: 15, // bu yerda to'g'ri qiymatni olish kerak
       Agent_version: app.version,
       adress: "127.0.0.1", // bu yerda to'g'ri IP olish kerak
-      File_size: 1, // bu yerda to'g'ri fayl hajmi olish kerak
+      File_size: 1000, // bu yerda to'g'ri fayl hajmi olish kerak
       First_upload_date: "2024-01-01",
       Last_upload_date: "2024-01-01"
     }));

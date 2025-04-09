@@ -48,38 +48,38 @@ async function bootstrap() {
 
   // Swagger dokumentatsiyasini sozlash
   const config = new DocumentBuilder()
-    .setTitle('Datagaze Platform Web')
-    .setDescription(`
-      Datagaze Platform Web API - bu kompyuter va ilovalarni boshqarish uchun RESTful API.
-      
-      ## Asosiy funksiyalar
-      - Foydalanuvchilarni boshqarish (Admin/SuperAdmin)
-      - Kompyuterlarni boshqarish
-      - Ilovalarni o'rnatish va o'chirish
-      - Monitoring va hisobotlar
-      
-      ## Autentifikatsiya
-      API JWT (JSON Web Token) autentifikatsiyasidan foydalanadi.
-      1. /api/1/auth/login endpointi orqali login qiling
-      2. Qaytgan token ni 'Bearer' sxemasi bilan Authorization header da yuboring
-    `)
+    .setTitle('Datagaze Platform API')
+    .setDescription('Datagaze Platform uchun API dokumentatsiyasi')
     .setVersion('1.0')
-    .addTag('auth', 'Autentifikatsiya va foydalanuvchilarni boshqarish')
-    .addTag('computers', 'Kompyuterlarni boshqarish')
-    .addTag('applications', 'Ilovalarni boshqarish')
-    .addTag('monitoring', 'Monitoring va hisobotlar')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
+    .addTag('auth', 'Autentifikatsiya va avtorizatsiya')
+    .addTag('users', 'Foydalanuvchilar bilan ishlash')
+    .addTag('files', 'Fayllar bilan ishlash')
     .build();
-  
-  // Swagger dokumentini yaratish va o'rnatish
+
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document); // /api URL da Swagger UI ni o'rnatish
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+    customSiteTitle: 'Datagaze API Docs',
+  });
 
   // Serverni ishga tushirish
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0');
   console.log(`Application is running on: http://localhost:${port}`);
-  console.log(`Swagger documentation is available at: http://localhost:${port}/api`);
+  console.log(`Swagger documentation is available at: http://localhost:${port}/api/docs`);
 }
 
 // Applicationni ishga tushirish
