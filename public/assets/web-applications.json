@@ -1,0 +1,16 @@
+[
+    {
+      "id": "832f6fa7-dad4-430a-9206-5fb118d36f26",
+      "application_name": "DLP",
+      "version": "4.7.2",
+      "pathToIcon": "/dlp.png",
+      "is_installed": false
+    },
+    {
+      "id": "18903dfc-0903-4423-a620-8fa8e9e8663e",
+      "application_name": "WAF",
+      "version": "2.1.0",
+      "pathToIcon": "/waf.png",
+      "is_installed": true
+    }
+  ]
